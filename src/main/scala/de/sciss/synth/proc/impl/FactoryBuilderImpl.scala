@@ -32,7 +32,7 @@ import de.sciss.synth.proc._
 import de.sciss.synth.{Rate, audio, control, GE}
 
 /**
- *    @version 0.11, 13-Jul-10
+ *    @version 0.11, 17-Jul-10
  */
 object FactoryBuilderImpl {
    def gen( name: String ) : ProcFactoryBuilder =
@@ -141,7 +141,7 @@ extends ProcFactoryBuilder {
       res
    }
 
-   def bufCue( name: String, path: String ) : ProcBuffer = {
+   def bufCue( name: String, path: => String ) : ProcBuffer = {
       val b = new BufferImpl( name, implicit t => path )
       addBuffer( b )
       b

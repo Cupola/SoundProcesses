@@ -34,7 +34,7 @@ import collection.immutable.{ IndexedSeq => IIdxSeq }
 import reflect.ClassManifest
 
 /**
- *    @version 0.12, 14-Jul-10
+ *    @version 0.12, 17-Jul-10
  */
 object DSL {
    private val cmGE     = ClassManifest.fromClass( classOf[ GE ])
@@ -156,7 +156,7 @@ object DSL {
 //      } else error( "Unsupported graph return type" )
 //   }
 
-   def bufCue( name: String, path: String ) : ProcBuffer =
+   def bufCue( name: String, path: => String ) : ProcBuffer =
       ProcFactoryBuilder.local.bufCue( name, path )
    def bufCue( name: String, p: ProcParamString ) : ProcBuffer =
       ProcFactoryBuilder.local.bufCue( name, p )
