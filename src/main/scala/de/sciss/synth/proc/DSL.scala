@@ -160,6 +160,7 @@ object DSL {
       ProcFactoryBuilder.local.bufCue( name, path )
    def bufCue( name: String, p: ProcParamString ) : ProcBuffer =
       ProcFactoryBuilder.local.bufCue( name, p )
+//   def bufEmpty( name: String, )
 
    // ---- scope : graph (ProcGraphBuilder) ----
    

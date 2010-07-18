@@ -32,7 +32,7 @@ import collection.immutable.{ SortedMap => ISortedMap, SortedSet => ISortedSet }
 import de.sciss.synth._
 
 /**
- *    @version 0.12, 10-Jul-10
+ *    @version 0.12, 18-Jul-10
  */
 sealed trait RichBus {
    import RichBus._
@@ -203,13 +203,17 @@ object RichBus {
    def soundIn( server: Server, numChannels: Int, offset: Int = 0 ) : RichAudioBus = {
       val o = server.options
       require( offset +  numChannels <= o.inputBusChannels )
-      HardwareImpl( new AudioBus( server, o.outputBusChannels, numChannels + offset ))
+      FixedImpl( new AudioBus( server, o.outputBusChannels, numChannels + offset ))
    }
 
    def soundOut( server: Server, numChannels: Int, offset: Int = 0 ) : RichAudioBus = {
       val o = server.options
       require( offset + numChannels <= o.outputBusChannels )
-      HardwareImpl( new AudioBus( server, offset, numChannels ))
+      FixedImpl( new AudioBus( server, offset, numChannels ))
+   }
+
+   def wrap( bus: AudioBus ) : RichAudioBus = {
+      FixedImpl( bus )
    }
 
 //   trait User {
@@ -308,7 +312,7 @@ object RichBus {
       protected val writers   = Ref( Set.empty[ User ])
    }
 
-   private case class HardwareImpl( bus: AudioBus )
+   private case class FixedImpl( bus: AudioBus )
    extends AbstractAudioImpl {
       import RichAudioBus._
 
