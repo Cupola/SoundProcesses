@@ -11,7 +11,8 @@ import collection.immutable.{ Queue => IQueue }
 class GraphBuilderImpl( graph: GraphImpl, val tx: ProcTxn ) extends ProcGraphBuilder {
 //      var controls   = Set.empty[ ControlSetMap ]
    var usedParams = Set.empty[ ProcParam ]
-   var buffers    = Set.empty[ BufferImpl ]
+   var buffers    = Set.empty[ ProcBuffer ]
+   private var bufCount = 0
 
    // XXX we might not even need this, at least for graphs
    // as the included parameters are directly accessible
@@ -21,12 +22,21 @@ class GraphBuilderImpl( graph: GraphImpl, val tx: ProcTxn ) extends ProcGraphBui
    }
 
    def includeBuffer( b: ProcBuffer ) {
-      b match {
-         case bi: BufferImpl => buffers += bi
-         case _ => println( "WARNING: Currently not supporting buffer " + b )  // XXX
-      }
+      buffers += b
    }
 
+   def bufEmpty( numFrames: Int, numChannels: Int ) : ProcBuffer = {
+      val unique = bufCount
+      bufCount += 1
+      new BufferEmptyImpl( unique, numFrames, numChannels )
+   }
+
+   def bufCue( path: String ) : ProcBuffer = {
+      val unique = bufCount
+      bufCount += 1
+      new BufferCueImpl( unique, path )
+   }
+   
    /**
     */
    def play : ProcRunning = {
@@ -89,7 +99,7 @@ class GraphBuilderImpl( graph: GraphImpl, val tx: ProcTxn ) extends ProcGraphBui
                     audioInputs.map(  tup => tup._2 -> rs.read(  tup ))( breakOut )
          busMap ++= audioOutputs.map( tup => tup._2 -> rs.write( tup ))
 
-println( "play " + p.name + " ; busses = " + busMap )
+//println( "play " + p.name + " ; busses = " + busMap )
 
          bufsZipped.foreach( tup => {
             val (b, rb) = tup

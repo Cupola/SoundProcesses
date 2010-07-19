@@ -1,6 +1,6 @@
 /*
  *  DSL.scala
- *  (ScalaCollider-Proc)
+ *  (SoundProcesses)
  *
  *  Copyright (c) 2010 Hanns Holger Rutz. All rights reserved.
  *
@@ -34,7 +34,7 @@ import collection.immutable.{ IndexedSeq => IIdxSeq }
 import reflect.ClassManifest
 
 /**
- *    @version 0.12, 17-Jul-10
+ *    @version 0.12, 19-Jul-10
  */
 object DSL {
    private val cmGE     = ClassManifest.fromClass( classOf[ GE ])
@@ -156,16 +156,25 @@ object DSL {
 //      } else error( "Unsupported graph return type" )
 //   }
 
-   def bufCue( name: String, path: => String ) : ProcBuffer =
-      ProcFactoryBuilder.local.bufCue( name, path )
-   def bufCue( name: String, p: ProcParamString ) : ProcBuffer =
-      ProcFactoryBuilder.local.bufCue( name, p )
-//   def bufEmpty( name: String, )
+   // XXX they should also go into the graphs...? or both possible?
+//   def bufCue( name: String, path: => String ) : ProcBuffer =
+//      ProcFactoryBuilder.local.bufCue( name, path )
+//   def bufCue( name: String, p: ProcParamString ) : ProcBuffer =
+//      ProcFactoryBuilder.local.bufCue( name, p )
 
    // ---- scope : graph (ProcGraphBuilder) ----
    
 //   implicit def paramNumToGE( p: ProcParamNum ) : GE = p.embed
 //   implicit def bufferToGE( b: ProcBuffer ) : GE = b.embed
+
+   def bufCue( path: String ) : ProcBuffer =
+      ProcGraphBuilder.local.bufCue( path )
+//   def bufCue( name: String, p: ProcParamString ) : ProcBuffer =
+//      ProcFactoryBuilder.local.bufCue( name, p )
+   def bufEmpty( numFrames: Int, numChannels: Int = 1 ) : ProcBuffer =
+      ProcGraphBuilder.local.bufEmpty( numFrames, numChannels )
+
+   def sampleRate : Double = Proc.local.server.sampleRate
 
    implicit def procToAudioInput( p: Proc ) : ProcAudioInput   = p.audioInput( "in" )
    implicit def procToAudioOutput( p: Proc ) : ProcAudioOutput = p.audioOutput( "out" )
@@ -174,12 +183,21 @@ object DSL {
 }
 
 trait ProcBuffer {
-   def name : String
-//   def kr : GE // = name.kr
+   def controlName : String
+   private[proc] def create( server: Server )( implicit tx: ProcTxn ) : RichBuffer
+
+   private[proc] def disposeWith( rb: RichBuffer, rs: RichSynth ) {
+      rs.synth.onEnd { rb.server ! rb.buf.closeMsg( rb.buf.freeMsg )} // XXX update RichBuffer fields !
+   }
 
    // ---- scope : graph (ProcGraphBuilder) ----
    
-   def id : GE
+//   def id : GE
+   def id : GE = {
+      ProcGraphBuilder.local.includeBuffer( this )
+      controlName.kr
+   }
+
    def numChannels : Int
 }
 

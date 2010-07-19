@@ -31,7 +31,7 @@ package de.sciss.synth.proc
 import de.sciss.synth.AddAction
 
 /**
- *    @version 0.12, 01-Jul-10
+ *    @version 0.12, 19-Jul-10
  */
 // XXX THIS SHOULD EXTEND TxnPlayer AND WE KILL OFF ProcRunning
 trait ProcEntry {
@@ -49,4 +49,7 @@ trait ProcGraphBuilder {
    def tx: ProcTxn
    def includeParam( p: ProcParam ) : Unit
    def includeBuffer( b: ProcBuffer ) : Unit
+
+   def bufCue( path: String ) : ProcBuffer
+   def bufEmpty( numFrames: Int, numChannels: Int ) : ProcBuffer
 }

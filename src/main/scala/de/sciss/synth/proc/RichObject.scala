@@ -35,7 +35,7 @@ import ProcTxn._
 import de.sciss.scalaosc.{OSCBundle, OSCMessage}
 
 /**
- *    @version 0.11, 06-Jul-10
+ *    @version 0.11, 19-Jul-10
  */
 trait RichObject { def server: Server }
 
@@ -51,6 +51,10 @@ case class RichBuffer( buf: Buffer ) extends RichObject {
 
    def cue( path: String, startFrame: Int = 0 )( implicit tx: ProcTxn ) {
       tx.add( buf.cueMsg( path, startFrame ), Some( (Always, hasContent, true) ), false, Map( isOnline -> true ))
+   }
+
+   def zero( implicit tx: ProcTxn ) {
+      tx.add( buf.zeroMsg, Some( (Always, hasContent, true) ), false, Map( isOnline -> true ))
    }
 }
 

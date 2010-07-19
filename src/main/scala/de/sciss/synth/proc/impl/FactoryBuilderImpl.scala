@@ -51,7 +51,7 @@ extends ProcFactoryBuilder {
    private var finished                   = false
    private var paramMap                   = Map.empty[ String, ProcParam ]
    private var paramSeq                   = Vector.empty[ ProcParam ]
-   private var buffers                    = Map[ String, ProcBuffer ]()
+//   private var buffers                    = Map[ String, ProcBuffer ]()
    private var graph: Option[ ProcGraph ] = None
    private var entry: Option[ ProcEntry ] = None
    private var pAudioIns                  = Vector.empty[ ProcParamAudioInput ]
@@ -141,17 +141,17 @@ extends ProcFactoryBuilder {
       res
    }
 
-   def bufCue( name: String, path: => String ) : ProcBuffer = {
-      val b = new BufferImpl( name, implicit t => path )
-      addBuffer( b )
-      b
-   }
-
-   def bufCue( name: String, p: ProcParamString ) : ProcBuffer = {
-      val b = new BufferImpl( name, implicit t => Proc.local.getString( p.name ))
-      addBuffer( b )
-      b
-   }
+//   def bufCue( name: String, path: => String ) : ProcBuffer = {
+//      val b = new BufferImpl( name, implicit t => path )
+//      addBuffer( b )
+//      b
+//   }
+//
+//   def bufCue( name: String, p: ProcParamString ) : ProcBuffer = {
+//      val b = new BufferImpl( name, implicit t => Proc.local.getString( p.name ))
+//      addBuffer( b )
+//      b
+//   }
 
     private def enter( e: ProcEntry ) {
       require( entry.isEmpty, "Entry already defined" )
@@ -179,8 +179,8 @@ extends ProcFactoryBuilder {
       paramSeq :+= p
    }
 
-   private def addBuffer( b: ProcBuffer ) {
-      require( !buffers.contains( b.name ), "Buffer name '" + b.name + "' already taken" )
-      buffers += b.name -> b
-   }
+//   private def addBuffer( b: ProcBuffer ) {
+//      require( !buffers.contains( b.name ), "Buffer name '" + b.name + "' already taken" )
+//      buffers += b.name -> b
+//   }
 }

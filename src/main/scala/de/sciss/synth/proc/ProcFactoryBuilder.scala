@@ -40,7 +40,7 @@ import ProcTransport._
 import ugen._
 
 /**
- *    @version 0.12, 17-Jul-10
+ *    @version 0.12, 19-Jul-10
  */
 trait ProcFactoryBuilder {
    def name : String
@@ -55,8 +55,8 @@ trait ProcFactoryBuilder {
    def graphIn( fun: GE => GE ) : ProcGraph
    def graphInOut( fun: GE => GE ) : ProcGraph
 
-   def bufCue( name: String, path: => String ) : ProcBuffer
-   def bufCue( name: String, p: ProcParamString ) : ProcBuffer
+//   def bufCue( name: String, path: => String ) : ProcBuffer
+//   def bufCue( name: String, p: ProcParamString ) : ProcBuffer
 
    def finish : ProcFactory
 

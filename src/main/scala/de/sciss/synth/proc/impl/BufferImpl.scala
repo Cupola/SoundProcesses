@@ -32,34 +32,41 @@ import de.sciss.synth.proc._
 import de.sciss.synth._
 import de.sciss.synth.io.AudioFile
 
-// XXX either BufferCueImpl or put cueing information in Graph instead
-class BufferImpl( val name: String, path: ProcTxn => String ) extends ProcBuffer {
-   def controlName   = "buf$" + name
+/**
+ *    @version 0.11, 19-Jul-10
+ */
+abstract class BufferImpl extends ProcBuffer {
+   protected def uniqueID : Int
+   def controlName   = "buf$" + uniqueID
+}
 
+class BufferEmptyImpl( val uniqueID: Int, numFrames: Int, val numChannels: Int ) extends BufferImpl {
+   def create( server: Server )( implicit tx: ProcTxn ) : RichBuffer = {
+      val b = Buffer( server )
+      val rb = RichBuffer( b )
+      rb.alloc( numFrames, numChannels )
+      rb.zero // XXX actually needed? to satisfy ProcTxn yes, but technically...?
+      rb
+   }
+}
+
+
+class BufferCueImpl( val uniqueID: Int, path: String ) extends BufferImpl {
    def create( server: Server )( implicit tx: ProcTxn ) : RichBuffer = {
       val b = Buffer( server )
       val rb = RichBuffer( b )
       rb.alloc( 32768, numChannels )
-      rb.cue( path( tx ))
+      rb.cue( path ) // ( tx )
       rb
-   }
-
-   def disposeWith( rb: RichBuffer, rs: RichSynth ) {
-      rs.synth.onEnd { rb.server ! rb.buf.closeMsg( rb.buf.freeMsg )} // XXX update RichBuffer fields !
    }
 
    def numChannels : Int = {
       try { // XXX should call includeBuffer ?
-         val spec = AudioFile.readSpec( path( ProcGraphBuilder.local.tx ))
+         val spec = AudioFile.readSpec( path ) // ( ProcGraphBuilder.local.tx )
          spec.numChannels
       } catch {
          case e => e.printStackTrace()
          1  // XXX what should we do? --> FAIL
       }
-   }
-
-   def id : GE = {
-      ProcGraphBuilder.local.includeBuffer( this )
-      controlName.kr
    }
 }
