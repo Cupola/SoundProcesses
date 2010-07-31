@@ -401,48 +401,113 @@ if( isPlaying ) println( "WARNING: ~> ctrl : not stopped / restarted yet!" )
       control.proc
    }
 
+//   def ~/>( in: ProcAudioInput )( implicit tx: ProcTxn ) : ProcAudioOutput = {
+//      val e = ProcEdge( out, in )
+//      if( !edges.contains( e )) return this
+//
+//      val inWasPlaying = in.isPlaying
+//      if( inWasPlaying ) in.proc.stop  // keeps reading from oldBus!
+//      ProcDemiurg.removeEdge( e )
+//      removeEdge( e )
+//      val outPhysical  = out.isPlaying && param.physical && edges.isEmpty
+//      if( outPhysical ) {
+//         bus.foreach( oldBus => {
+//            val numChannels   = oldBus.numChannels
+//            val server        = proc.server
+//            val newBus        = RichBus.soundOut( server, numChannels )
+//            tx.transit match {
+//               case d: DurationalTransition => {
+//                  val rsd1          = RichSynthDef( server, routeGraph( numChannels ))
+//                  val rsd2          = RichSynthDef( server, xfadeSendGraph( numChannels ))
+//                  val tmpBus        = RichBus.tmpAudio( server, numChannels )
+//                  // bit tricky... we should place them as "innermost" as possible,
+//                  // so that for example a mapping synth in the post-group won't
+//                  // read the bus too early.
+//                  val rs1           = rsd1.play( proc.preGroup, List( "$dur" -> d.dur, "$done" -> freeSelf.id ), addToTail )
+//                  val rs2           = rsd2.play( proc.postGroup,
+//                     List( "$start" -> 0, "$stop" -> 1, "$shape" -> welchShape.id,
+//                          "$dur" -> d.dur, "$done" -> freeSelf.id ), addToHead )
+//                  rs1.read(      newBus -> "$in" )
+//                  rs1.write(     tmpBus -> "$out" )
+//                  rs2.read(      tmpBus -> "$in" )
+//                  rs2.readWrite( newBus -> "$bus" )
+//                  rs2.write(     oldBus -> "$out" )
+////                     fade( d, newBus, 0 -> 1, welchShape, freeSelf )
+//               }
+//               case _ =>
+//            }
+////println( "SETTING BUS FROM " + oldBus + " TO " + newBus )
+//            bus = Some( newBus )
+//         })
+//      }
+//      finishDisconnect( e )
+//      if( inWasPlaying && in.bus.isDefined ) in.proc.play  // i.e. physical ; XXX currently always false
+//   }
+
    def ~/>( in: ProcAudioInput )( implicit tx: ProcTxn ) : ProcAudioOutput = {
+//      reconnect( in, None )
+//      this
+//   }
+//
+//   private def reconnect( in: ProcAudioInput, newOutO: Option[ ProcAudioOutput ])( implicit tx: ProcTxn ) {
       val e = ProcEdge( out, in )
-      if( edges.contains( e )) {
-         val inWasPlaying = in.isPlaying
-         if( inWasPlaying ) in.proc.stop  // keeps reading from oldBus!
-         ProcDemiurg.removeEdge( e )
-         removeEdge( e )
-         val outPhysical  = out.isPlaying && param.physical && edges.isEmpty
-         if( outPhysical ) {
-            bus.foreach( oldBus => {
-               val numChannels   = oldBus.numChannels
-               val server        = proc.server
-               val newBus        = RichBus.soundOut( server, numChannels )
-               tx.transit match {
-                  case d: DurationalTransition => {
-                     val rsd1          = RichSynthDef( server, routeGraph( numChannels ))
-                     val rsd2          = RichSynthDef( server, xfadeSendGraph( numChannels ))
-                     val tmpBus        = RichBus.tmpAudio( server, numChannels )
-                     // bit tricky... we should place them as "innermost" as possible,
-                     // so that for example a mapping synth in the post-group won't
-                     // read the bus too early.
-                     val rs1           = rsd1.play( proc.preGroup, List( "$dur" -> d.dur, "$done" -> freeSelf.id ), addToTail )
-                     val rs2           = rsd2.play( proc.postGroup,
-                        List( "$start" -> 0, "$stop" -> 1, "$shape" -> welchShape.id,
-                             "$dur" -> d.dur, "$done" -> freeSelf.id ), addToHead )
-                     rs1.read(      newBus -> "$in" )
-                     rs1.write(     tmpBus -> "$out" )
-                     rs2.read(      tmpBus -> "$in" )
-                     rs2.readWrite( newBus -> "$bus" )
-                     rs2.write(     oldBus -> "$out" )
-//                     fade( d, newBus, 0 -> 1, welchShape, freeSelf )
-                  }
-                  case _ =>
-               }
-//println( "SETTING BUS FROM " + oldBus + " TO " + newBus )
-               bus = Some( newBus )
-            })
-         }
-         finishDisconnect( e )
-         if( inWasPlaying && in.bus.isDefined ) in.proc.play  // i.e. physical ; XXX currently always false
+      if( !edges.contains( e )) {
+//         if( newOutO.isDefined ) error( out.toString + " was not connected to " + in )
+         return this
       }
-      this
+
+      val inWasPlaying = in.isPlaying
+//      if( inWasPlaying ) in.proc.stop  // keeps reading from oldBus!
+      ProcDemiurg.removeEdge( e )
+      removeEdge( e )
+      val outPhysical  = out.isPlaying && param.physical && edges.isEmpty
+      if( outPhysical ) {
+         bus.foreach( oldBus => {
+            val numChannels   = oldBus.numChannels
+            val server        = proc.server
+            val newBus        = RichBus.soundOut( server, numChannels )
+            tx.transit match {
+               case d: DurationalTransition => {
+                  val rsd1          = RichSynthDef( server, routeGraph( numChannels ))
+                  val rsd2          = RichSynthDef( server, xfadeSendGraph( numChannels ))
+                  val tmpBus        = RichBus.tmpAudio( server, numChannels )
+                  // bit tricky... we should place them as "innermost" as possible,
+                  // so that for example a mapping synth in the post-group won't
+                  // read the bus too early.
+                  val rs1           = rsd1.play( proc.preGroup, List( "$dur" -> d.dur, "$done" -> freeSelf.id ), addToTail )
+                  val rs2           = rsd2.play( proc.postGroup,
+                     List( "$start" -> 0, "$stop" -> 1, "$shape" -> welchShape.id,
+                          "$dur" -> d.dur, "$done" -> freeSelf.id ), addToHead )
+                  rs1.read(      newBus -> "$in" )
+                  rs1.write(     tmpBus -> "$out" )
+                  rs2.read(      tmpBus -> "$in" )
+                  rs2.readWrite( newBus -> "$bus" )
+                  rs2.write(     oldBus -> "$out" )
+//                     fade( d, newBus, 0 -> 1, welchShape, freeSelf )
+               }
+               case _ =>
+            }
+//println( "SETTING BUS FROM " + oldBus + " TO " + newBus )
+            bus = Some( newBus )
+         })
+      }
+      in.removeEdge( e )
+//      newOutO match {
+//         case Some( newOut ) => {
+//            if( inWasPlaying && !newOut.isPlaying ) newOut.proc.play
+//            newOut ~> in
+//         }
+//         case None => {
+//            if( inWasPlaying ) in.proc.stop
+//            in.bus = None
+//         }
+//      }
+      if( inWasPlaying ) {
+         in.bus = in.bus.map( oldBus => RichBus.audio( proc.server, oldBus.numChannels ))
+      } else {
+         in.bus = None
+      }
+      out
    }
 
 //   private def duringStop( in: ProcAudioInput )( thunk: => Unit)( implicit tx: ProcTxn ) {
@@ -456,10 +521,10 @@ if( isPlaying ) println( "WARNING: ~> ctrl : not stopped / restarted yet!" )
 //      if( inWasPlaying )  in.proc.play
 //   }
 
-   private def finishDisconnect( e: ProcEdge )( implicit tx: ProcTxn ) {
-      e.in.removeEdge( e )
-      e.in.bus = None // XXX in should decide whether it is recreating a physical input
-  }
+//   private def finishDisconnect( e: ProcEdge )( implicit tx: ProcTxn ) {
+//      e.in.removeEdge( e )
+//      e.in.bus = None // XXX in should decide whether it is recreating a physical input
+//  }
 
    def ~|( insert: (ProcAudioInput, ProcAudioOutput) )( implicit tx: ProcTxn ) : ProcAudioInsertion = {
 // ... well... we don't actually *require* that, it would just be logical ...
@@ -467,19 +532,35 @@ if( isPlaying ) println( "WARNING: ~> ctrl : not stopped / restarted yet!" )
       new AudioInsertionImpl( this, insert )
    }
 
+//   private[proc] def insert( in: ProcAudioInput, insert: (ProcAudioInput, ProcAudioOutput) )
+//                           ( implicit tx: ProcTxn ) {
+//      val outWasPlaying = out.isPlaying
+//      val inWasPlaying  = in.isPlaying
+//      // XXX eventually we wouldn't want to stop and re-start the
+//      // processes but introduce smart fading
+//      if( inWasPlaying )   in.proc.stop
+//      if( outWasPlaying )  out.proc.stop
+//      out ~/> in
+//      out ~> insert._1
+//      insert._2 ~> in
+//      if( inWasPlaying )   in.proc.play
+//      if( outWasPlaying )  out.proc.play
+//   }
+
+//   private[proc] def insert( in: ProcAudioInput, insert: (ProcAudioInput, ProcAudioOutput) )
+//                           ( implicit tx: ProcTxn ) {
+//      out ~> insert._1
+////      filter.play
+////      out ~/> in
+////      insert._2 ~> succ.in
+//      out.reconnect( in, Some( insert._2 ))
+//   }
+
    private[proc] def insert( in: ProcAudioInput, insert: (ProcAudioInput, ProcAudioOutput) )
                            ( implicit tx: ProcTxn ) {
-      val outWasPlaying = out.isPlaying
-      val inWasPlaying  = in.isPlaying
-      // XXX eventually we wouldn't want to stop and re-start the
-      // processes but introduce smart fading
-      if( inWasPlaying )   in.proc.stop
-      if( outWasPlaying )  out.proc.stop
-      out ~/> in
       out ~> insert._1
+      out ~/> in
       insert._2 ~> in
-      if( inWasPlaying )   in.proc.play
-      if( outWasPlaying )  out.proc.play
    }
 }
 

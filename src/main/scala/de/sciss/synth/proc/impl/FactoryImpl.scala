@@ -33,7 +33,7 @@ import de.sciss.synth.Server
 import collection.immutable.{ IndexedSeq => IIdxSeq }
 
 /**
- *    @version 0.11, 13-Jul-10
+ *    @version 0.11, 20-Jul-10
  */
 class FactoryImpl( val name: String, val anatomy: ProcAnatomy,
                    val entry: ProcEntry,
@@ -45,10 +45,17 @@ extends ProcFactory {
    def make( implicit tx: ProcTxn ) : Proc = {
       val res = new ProcImpl( this, Server.default )
       ProcDemiurg.addVertex( res )
+//      res.init
       res
    }
 
    def param( name: String ) : ProcParam = paramMap( name )
 
+   lazy val bypassGraph : ProcGraph = new GraphImpl( () => {
+      val p = Proc.local
+      val sig = p.param( "in" ).asInstanceOf[ ProcParamAudioInput ].ar 
+      p.param( "out" ).asInstanceOf[ ProcParamAudioOutput ].ar( sig )
+   })
+   
    override def toString = "fact(" + name + ")"
 }

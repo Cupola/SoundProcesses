@@ -44,6 +44,26 @@ object SoundProcesses {
          "This is a library which cannot be executed directly.\n" )
    }
 
+//   def test2 {
+//      case class Edge( sourceVertex: String, targetVertex: String ) extends Topology.Edge[ String ]
+//      val topo1 = Topology.empty[ String, Edge ]
+//      val topo2 = topo1.addVertex( "A" )
+//      val topo3 = topo2.addVertex( "B" )
+//      val Some( (topo4, source1, affected1) ) = topo3.addEdge( Edge( "A", "B" ))
+//      val topo4b = topo4.addVertex( "D" )
+//      val topo5 = topo4b.addVertex( "C" )
+//      val Some( (topo6, source2, affected2) ) = topo5.addEdge( Edge( "A", "C" ))
+//      val topo7 = topo6.removeEdge( Edge( "A", "B" ))
+//      val Some( (topo8, source3, affected3) ) = topo7.addEdge( Edge( "C", "B" ))
+//      // removal
+//      val topo9 = topo8.removeEdge( Edge( "A", "C" ))
+//      val topo10 = topo9.removeEdge( Edge( "C", "B" ))
+//      val Some( (topo11, source4, affected4) ) = topo10.addEdge( Edge( "A", "B" ))
+//      val topo12 = topo11.removeVertex( "C" )
+//      val topo13 = topo12.removeVertex( "D" )
+//      println( "done" )
+//   }
+
    def test {
       import DSL._
       import de.sciss.synth._

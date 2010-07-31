@@ -12,7 +12,7 @@ if( !bypassRef().swap( true )) {
 }
 
 where play diverges and creates a different runningRef
-; nachteil : synths we diskin werden nicht pausiert, d.h.
+; nachteil : synths wie diskin werden nicht pausiert, d.h.
 müssen neu gecue'ed werden etc.
 
 ; die art des bypass könnte später explizit definiert werden
@@ -48,3 +48,13 @@ post A :
 	Out( tmp2, unmixed )
 
 B : read tmp2
+
+/////////////////////////
+
+instant {
+   new filter
+   filter.bypass
+   pred.out ~> filter.in
+   filter.play
+   filter.out ~> succ.in (= pred.out ~/> succ.in)
+}

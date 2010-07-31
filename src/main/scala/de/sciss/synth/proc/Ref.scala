@@ -161,6 +161,9 @@ object TxnLocal {
    def apply[ /*@specialized*/ T ]( initValue: => T ) : TxnLocal[ T ] = new Impl( new CTxnLocal[ T ] {
       override def initialValue( tx: Txn ): T = initValue
    })
+//   def apply[ /*@specialized*/ T ]( initValue: Txn => T ) : TxnLocal[ T ] = new Impl( new CTxnLocal[ T ] {
+//      override def initialValue( tx: Txn ): T = initValue
+//   })
 
    private class Impl[ T ]( c: CTxnLocal[ T ]) extends TxnLocal[ T ] {
       def apply()( implicit tx: ProcTxn ) : T = c.get( tx.ccstm )

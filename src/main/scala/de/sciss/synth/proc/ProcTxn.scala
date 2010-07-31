@@ -66,10 +66,20 @@ object ProcTxn {
 
    var verbose = false
 
+//   private val localVar = new ThreadLocal[ ProcTxn ]
+//   def local : ProcTxn = localVar.get
+
    def atomic[ Z ]( block: ProcTxn => Z ) : Z = STM.atomic { implicit t =>
       val tx = new Impl
       t.addWriteResource( tx, Int.MaxValue )
-      block( tx )
+//      val oldTx = localVar.get
+//      if( oldTx != null ) error( "Cannot nest transactions currently" )
+//      localVar.set( tx )
+//      try {
+         block( tx )
+//      } finally {
+//         localVar.set( oldTx )
+//      }
    }
 
    private val startTime    = System.currentTimeMillis // XXX eventually in logical time framework

@@ -35,7 +35,7 @@ import de.sciss.synth.{ audio => arate, control => krate, _ }
 import ugen.Line
 
 /**
- *    @version 0.12, 13-Jul-10
+ *    @version 0.12, 20-Jul-10
  */
 class ProcImpl( fact: FactoryImpl, val server: Server )
 extends Proc {
@@ -48,6 +48,8 @@ extends Proc {
 //   private val playGroupVar      = Ref[ Option[ RichGroup ]]( None )
    private val groupsRef         = Ref[ Option[ AllGroups ]]( None )
    private val pStringValues     = Ref( Map.empty[ ProcParamString, String ])
+   private val stateRef          = Ref( State( true ))
+   private val backRef           = Ref[ Option[ RichGroup ]]( None )
 
    lazy val audioInputs          = fact.pAudioIns.map(  p => new AudioInputImpl(  this, p ))
    lazy val audioOutputs         = fact.pAudioOuts.map( p => new AudioOutputImpl( this, p ))
@@ -56,6 +58,10 @@ extends Proc {
       case pAudio: ProcParamAudio      => new ControlImpl( proc, pAudio, arate )
    }
    private lazy val controlMap: Map[ String, ProcControl ] = controls.map( c => (c.name -> c) )( breakOut )
+
+//   private[proc] def init( implicit tx: ProcTxn ) {
+//      state = State( true ) // state.copy( valid = true )
+//   }
 
    def name    = fact.name
    def anatomy = fact.anatomy
@@ -310,8 +316,20 @@ extends Proc {
       })
       val rs      = rsd.play( if( dispose ) main else back, List( "$dur" -> xfade.dur ))
 
+      // monitor fading
+      backRef.set( Some( back ))
+      back.onEnd { tx0 =>
+println( "BACK REF END : LOOKING FOR " + back + " ; FOUND " + backRef()( tx0 ))
+         if( backRef()( tx0 ) == Some( back )) {
+println( "---> WAS THIS ONE" )
+            state_=( state( tx0 ).copy( fading = false ))( tx0 )
+            backRef.set( None )( tx0 )
+         }
+      }
+
       // update groups
       groupsRef.set( if( dispose ) None else Some( AllGroups( main, None, None, None, Some( back ))))
+      state = state.copy( fading = true )
    }
 
    def sendToBack( xfade: XFade )( implicit tx: ProcTxn ) {
@@ -323,37 +341,60 @@ extends Proc {
       }
    }
 
+//   def bypassed( implicit tx: ProcTxn ) = bypassedRef()
+//   def bypassed_=( value: Boolean )( implicit tx: ProcTxn ) {
+//      val was = bypassedRef.swap( value )
+////println( "BYPASSED OLD = " + was + "; NEW = " + value + "; isPlaying? " + isPlaying )
+//      if( (was != value) && isPlaying ) {
+//         stop
+//         play
+//      }
+//   }
+
+   def bypass( implicit tx: ProcTxn ) {
+      setBypass( true )
+   }
+
+   def engage( implicit tx: ProcTxn ) {
+      setBypass( false )
+   }
+   
+   private def setBypass( value: Boolean )( implicit tx: ProcTxn ) {
+      val st = state
+      if( st.bypassed == value ) return
+      if( st.playing ) stop
+      state = state.copy( bypassed = value )
+      if( st.playing ) play
+   }
+
    def play( implicit tx: ProcTxn ) {
-      if( isPlaying ) {
+      val st = state
+      if( st.playing ) {
          println( "WARNING: Proc.play - '" + this + "' already playing")
       } else {
+         val entry = if( st.bypassed ) fact.bypassGraph else fact.entry
          tx transit match {
             case xfade: XFade => coreGroup // enforce XXX ugly
             case _ =>
          }
          val run = Proc.use( proc ) {
 //               val target = playGroupOption.getOrElse( groupOption.getOrElse( RichGroup.default( server )))
-            fact.entry.play
+            entry.play
          }
-         val runO = Some( run )
-//         lazy val l: Model.Listener = {
-//            case ProcRunning.Stopped => {
-//               run.removeListener( l )
-//               ProcTxn.atomic { t2 => if( runningRef()( t2 ) == runO ) setRunning( None )( t2 )}
-//            }
-//            case m => println( "Ooooops : " + m )
-//         }
-//         run.addListener( l )
-         setRunning( runO )
+         runningRef.set( Some( run ))
+         state = st.copy( playing = true )
       }
    }
 
-   private def setRunning( run: Option[ ProcRunning ])( implicit tx: ProcTxn ) {
-      touch
-      val u    = updateRef()
-      val flag = Some( run.isDefined )
-      if( u.playing != flag ) updateRef.set( u.copy( playing = flag ))
-      runningRef.set( run )
+   def state( implicit tx: ProcTxn ) = stateRef()
+   private def state_=( newState: State )( implicit tx: ProcTxn ) {
+      val oldState = stateRef.swap( newState )
+      if( oldState != newState ) {
+         touch
+         val u = updateRef()
+println( this.toString + " :: OLD STATE : " + oldState + " -> NEW STATE : " + newState )
+         updateRef.set( u.copy( state = newState ))
+      }
    }
 
    def stop( implicit tx: ProcTxn ) {
@@ -366,12 +407,14 @@ extends Proc {
             }
             case _ =>
          }
-         setRunning( None )
+//         state = state.copy( playing = false )
+         runningRef.set( None )
       }
+      state = state.copy( playing = false )
    }
 
    def dispose( implicit tx: ProcTxn ) {
-      runningRef() foreach { r =>
+      runningRef() map { r =>
          r.stop
          tx transit match {
             case Instant => {
@@ -390,11 +433,19 @@ extends Proc {
          }
 //         audioInputs.foreach( _.dispose )
 //println( "WARNING : Proc.dispose : STILL INCOMPLETE : EDGES ARE NOT YET REMOVED" )
-         ProcDemiurg.removeVertex( proc )
+         runningRef.set( None )
+      } getOrElse {
+         groupsRef() foreach { all =>
+            all.main.free()
+            groupsRef.set( None )
+         }
       }
+      ProcDemiurg.removeVertex( proc )
+      state = state.copy( valid = false )
    }
 
-   def isPlaying( implicit tx: ProcTxn ) : Boolean = runningRef().isDefined
+//   def isPlaying( implicit tx: ProcTxn ) : Boolean = runningRef().isDefined
+   def isPlaying( implicit tx: ProcTxn ) : Boolean = stateRef().playing
 
    private[proc] def controlChanged( ctrl: ProcControl, newValue: ControlValue )( implicit tx: ProcTxn ) {
       runningRef().foreach( run => {

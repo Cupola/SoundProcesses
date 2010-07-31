@@ -173,12 +173,14 @@ object ProcDemiurg extends TxnModel[ ProcDemiurgUpdate ] { // ( val server: Serv
       if( res.isEmpty ) error( "Could not add edge" )
 
       val Some( (newTopo, source, affected) ) = res
+println( "NEW TOPO = " + newTopo + "; SOURCE = " + source + "; AFFECTED = " + affected )
       if( affected.isEmpty ) {
          return
       }
 
-      val srcGroup     = source.groupOption
-      val tgtGroups    = affected.map( p => (p, p.groupOption) )
+      val srcGroup   = source.groupOption
+      val tgtGroups  = affected.map( p => (p, p.groupOption) )
+      val isAfter    = source == e.sourceVertex 
 
       def startMoving( g: RichGroup ) {
          var succ                = g
@@ -190,13 +192,17 @@ object ProcDemiurg extends TxnModel[ ProcDemiurgUpdate ] { // ( val server: Serv
             tgtGroup match {
                case Some( g ) => {
 //                  tx.addFirst( g.server, g.moveAfterMsg( pred ))
-                  g.moveAfter( true, pred )
+                  if( isAfter ) {
+                     g.moveAfter( true, pred )
+                  } else {
+                     g.moveBefore( true, pred )
+                  }
                   succ = g
                }
                case None => {
                   val g = RichGroup( Group( target.server ))
 //                  tx.addFirst( g.server, g.newMsg( pred, addAfter ))
-                  g.play( pred, addAfter )
+                  g.play( pred, if( isAfter ) addAfter else addBefore )
                   target.group = g
                   succ = g
                }

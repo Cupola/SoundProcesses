@@ -32,7 +32,7 @@ import de.sciss.synth.proc._
 import de.sciss.synth.{Rate, audio, control, GE}
 
 /**
- *    @version 0.11, 17-Jul-10
+ *    @version 0.12, 20-Jul-10
  */
 object FactoryBuilderImpl {
    def gen( name: String ) : ProcFactoryBuilder =

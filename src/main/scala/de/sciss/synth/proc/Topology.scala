@@ -48,6 +48,18 @@ case class Topology[ V, E <: Topology.Edge[ V ]]( vertices: IIdxSeq[ V ], edges:
 
    type T = Topology[ V, E ]
 
+   override def toString = "Topology(" + vertices + ", " + edges + ")(" + unpositioned + ", " + edgeMap + ")"
+
+   /**
+    *    @return  None if the edge would violate acyclicity, otherwise the Some tuple contains
+    *             the new topology, the reference vertex and the affected vertices which need to
+    *             be moved with respect to the reference to reflect the new ordering. In case
+    *             that the reference is the source vertex of the added edge, the affected vertices
+    *             should be moved _after_ the reference and keep their internal grouping order.
+    *             In case the reference is the target vertex, the affected vertices sequence is
+    *             guaranteed to consist only exactly one element -- the source vertex -- which
+    *             should be moved _before_ the reference
+    */
    def addEdge( e: E ) : Option[ (T, V, IIdxSeq[ V ])] = {
       val source	   = e.sourceVertex
       val target	   = e.targetVertex
@@ -76,14 +88,16 @@ case class Topology[ V, E <: Topology.Edge[ V ]]( vertices: IIdxSeq[ V ], edges:
 
       // regular algorithm
       } else if( loBound > upBound ) {
-         Some( (this, source, Vector.empty) )
+//         Some( (this, source, Vector.empty) )
+         Some( (copy( vertices, newEdgeSet )( unpositioned, newEdgeMap ), source, Vector.empty) )
       } else if( loBound < upBound ) {
          val visited    = new MHashSet[ V ]()
          if( !discovery( visited, newEdgeMap, target, upBound )) {
             None  // Cycle --> Abort
          } else {
             val (newVertices, affected) = shift( visited, loBound, upBound )
-            Some( (copy( newVertices, newEdgeSet )( unpositioned, newEdgeMap ), source, affected) )
+            val newUnpos = if( loBound < unpositioned ) unpositioned - 1 else unpositioned
+            Some( (copy( newVertices, newEdgeSet )( newUnpos, newEdgeMap ), source, affected) )
          }
       } else { // loBound == upBound
          None
@@ -107,7 +121,7 @@ case class Topology[ V, E <: Topology.Edge[ V ]]( vertices: IIdxSeq[ V ], edges:
    def removeVertex( v: V ) : T = {
       val idx = vertices.indexOf( v )
       if( idx >= 0 ) {
-         val newUnpos = if( idx >= unpositioned ) unpositioned - 1 else unpositioned
+         val newUnpos = if( idx < unpositioned ) unpositioned - 1 else unpositioned
          copy( vertices.patch( idx, Vector.empty, 1 ))( newUnpos, edgeMap - v )
       } else this
    }
