@@ -50,6 +50,6 @@ trait ProcGraphBuilder {
    def includeParam( p: ProcParam ) : Unit
    def includeBuffer( b: ProcBuffer ) : Unit
 
-   def bufCue( path: String ) : ProcBuffer
+   def bufCue( path: String, startFrame: Long ) : ProcBuffer
    def bufEmpty( numFrames: Int, numChannels: Int ) : ProcBuffer
 }

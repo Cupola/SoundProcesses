@@ -51,18 +51,18 @@ class BufferEmptyImpl( val uniqueID: Int, numFrames: Int, val numChannels: Int )
 }
 
 
-class BufferCueImpl( val uniqueID: Int, path: String ) extends BufferImpl {
+class BufferCueImpl( val uniqueID: Int, path: String, startFrame: Long ) extends BufferImpl {
    def create( server: Server )( implicit tx: ProcTxn ) : RichBuffer = {
       val b = Buffer( server )
       val rb = RichBuffer( b )
       rb.alloc( 32768, numChannels )
-      rb.cue( path ) // ( tx )
+      rb.cue( path, startFrame.toInt ) // ( tx )
       rb
    }
 
    def numChannels : Int = {
       try { // XXX should call includeBuffer ?
-         val spec = AudioFile.readSpec( path ) // ( ProcGraphBuilder.local.tx )
+         val spec = AudioFileCache.spec( path ) // ( ProcGraphBuilder.local.tx )
          spec.numChannels
       } catch {
          case e => e.printStackTrace()

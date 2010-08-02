@@ -40,13 +40,14 @@ import ProcTransport._
 import ugen._
 
 /**
- *    @version 0.12, 19-Jul-10
+ *    @version 0.13, 02-Aug-10
  */
 trait ProcFactoryBuilder {
    def name : String
+   def pScalar( name: String, spec: ParamSpec, default: Double ) : ProcParamScalar
    def pControl( name: String, spec: ParamSpec, default: Double ) : ProcParamControl
    def pAudio( name: String, spec: ParamSpec, default: Double ) : ProcParamAudio
-   def pString( name: String, default: Option[ String ]) : ProcParamString
+//   def pString( name: String, default: Option[ String ]) : ProcParamString
    def pAudioIn( name: String, default: Option[ RichAudioBus ]) : ProcParamAudioInput
    def pAudioOut( name: String, default: Option[ RichAudioBus ]) : ProcParamAudioOutput
 

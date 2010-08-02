@@ -31,10 +31,10 @@ class GraphBuilderImpl( graph: GraphImpl, val tx: ProcTxn ) extends ProcGraphBui
       new BufferEmptyImpl( unique, numFrames, numChannels )
    }
 
-   def bufCue( path: String ) : ProcBuffer = {
+   def bufCue( path: String, startFrame: Long ) : ProcBuffer = {
       val unique = bufCount
       bufCount += 1
-      new BufferCueImpl( unique, path )
+      new BufferCueImpl( unique, path, startFrame )
    }
    
    /**

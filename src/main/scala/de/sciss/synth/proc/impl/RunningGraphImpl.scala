@@ -60,7 +60,7 @@ extends ProcRunning {
       accessories.foreach( _.stop )
    }
 
-   def setString( name: String, value: String )( implicit tx: ProcTxn ) { error( "not yet supported" )}
+//   def setString( name: String, value: String )( implicit tx: ProcTxn ) { error( "not yet supported" )}
 
    def setFloat( name: String, value: Float )( implicit tx: ProcTxn ) {
       rs.set( true, name -> value )

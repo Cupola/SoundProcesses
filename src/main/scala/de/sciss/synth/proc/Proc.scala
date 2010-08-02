@@ -80,8 +80,8 @@ trait Proc extends TxnModel[ Proc.Update ] with TxnPlayer with ProcSpec {
 
 //   def getFloat( name: String )( implicit tx: ProcTxn ) : Float
 //   def setFloat( name: String, value: Float )( implicit tx: ProcTxn ) : Proc
-   def getString( name: String )( implicit tx: ProcTxn ) : String
-   def setString( name: String, value: String )( implicit tx: ProcTxn ) : Proc
+//   def getString( name: String )( implicit tx: ProcTxn ) : String
+//   def setString( name: String, value: String )( implicit tx: ProcTxn ) : Proc
 
    def outEdges( implicit tx: ProcTxn ) : ISet[ ProcEdge ]
 

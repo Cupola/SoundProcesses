@@ -1,6 +1,6 @@
 /*
- *  ProcRunning.scala
- *  (ScalaCollider-Proc)
+ *  AudioFileCache.scala
+ *  (SoundProcesses)
  *
  *  Copyright (c) 2010 Hanns Holger Rutz. All rights reserved.
  *
@@ -28,29 +28,33 @@
 
 package de.sciss.synth.proc
 
-import de.sciss.synth.{ AudioBus, Group, Model }
-import collection.immutable.{ Seq => ISeq }
+import collection.mutable.{ HashMap => MHashMap }
+import java.io.{File, IOException}
+import de.sciss.synth.io.{AudioFile, AudioFileSpec}
 
 /**
- *    @version 0.11, 04-Aug-10
+ *    @version 0.10, 02-Aug-10
  */
-//object ProcRunning {
-//   case object Stopped
-//}
+object AudioFileCache {
+   private val sync  = new AnyRef
+   private val map   = MHashMap.empty[ File, Entry ]
 
-trait ProcRunning /* extends Model*/ {
-   def stop( implicit tx: ProcTxn ) : Unit
-   def setFloat( name: String, value: Float )( implicit tx: ProcTxn ) : Unit
-//   def setString( name: String, value: String )( implicit tx: ProcTxn ) : Unit
-//   def setAudioBus( name: String, value: RichBus )( implicit tx: ProcTxn ) : Unit
+   @throws( classOf[ IOException ])
+   def spec( path: String ) : AudioFileSpec = sync.synchronized {
+      val f       = new File( path )
+      val mod     = f.lastModified()
+      map.get( f ) match {
+         case Some( entry ) if( entry.modified == mod ) => entry.spec
+         case _ => {
+            val spec    = AudioFile.readSpec( f )
+            val entry   = Entry( mod, spec )
+            map += f -> entry
+            spec
+         }
+      }
+   }
 
-   def busChanged( name: String, bus: Option[ RichAudioBus ])( implicit tx: ProcTxn ) : Unit
+   def clear : Unit = sync.synchronized { map.clear }
 
-   def setGroup( group: RichGroup )( implicit tx: ProcTxn ) : Unit
-
-//   def controlAudioMapChanged( name: String, index: Int )( implicit tx: ProcTxn ) : Unit // XXX ugly
-
-   def anchorNode( implicit tx: ProcTxn ) : RichNode
-
-//   def accessories: ISeq[ TxnPlayer ]
+   private case class Entry( modified: Long, spec: AudioFileSpec )
 }

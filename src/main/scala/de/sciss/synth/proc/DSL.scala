@@ -31,14 +31,22 @@ package de.sciss.synth.proc
 import de.sciss.synth._
 import de.sciss.scalaosc.OSCBundle
 import collection.immutable.{ IndexedSeq => IIdxSeq }
+import io.AudioFileSpec
 import reflect.ClassManifest
+import ugen.{SendTrig, VDiskIn}
+import java.io.{IOException, File}
 
 /**
- *    @version 0.12, 19-Jul-10
+ *    @version 0.12, 02-Aug-10
  */
 object DSL {
    private val cmGE     = ClassManifest.fromClass( classOf[ GE ])
    private val cmUnit   = ClassManifest.Unit
+
+   // ---- scope : anywhere ----
+
+   @throws( classOf[ IOException ])
+   def audioFileSpec( path: String ) : AudioFileSpec = AudioFileCache.spec( path )
 
    // ---- scope : outside ----
 
@@ -105,12 +113,14 @@ object DSL {
 
    // ---- scope : gen (ProcFactoryBuilder) ----
 
+   def pScalar( name: String, spec: ParamSpec = ParamSpec(), default: Double ) : ProcParamScalar =
+      ProcFactoryBuilder.local.pScalar( name, spec, default )
    def pControl( name: String, spec: ParamSpec = ParamSpec(), default: Double ) : ProcParamControl =
       ProcFactoryBuilder.local.pControl( name, spec, default )
    def pAudio( name: String, spec: ParamSpec = ParamSpec(), default: Double ) : ProcParamAudio =
       ProcFactoryBuilder.local.pAudio( name, spec, default )
-   def pString( name: String, default: Option[ String ] = None ) : ProcParamString =
-      ProcFactoryBuilder.local.pString( name, default )
+//   def pString( name: String, default: Option[ String ] = None ) : ProcParamString =
+//      ProcFactoryBuilder.local.pString( name, default )
    def pAudioIn( name: String, default: Option[ RichAudioBus ] = None ) : ProcParamAudioInput =
       ProcFactoryBuilder.local.pAudioIn( name, default )
    def pAudioOut( name: String, default: Option[ RichAudioBus ] = None ) : ProcParamAudioOutput =
@@ -167,8 +177,8 @@ object DSL {
 //   implicit def paramNumToGE( p: ProcParamNum ) : GE = p.embed
 //   implicit def bufferToGE( b: ProcBuffer ) : GE = b.embed
 
-   def bufCue( path: String ) : ProcBuffer =
-      ProcGraphBuilder.local.bufCue( path )
+   def bufCue( path: String, startFrame: Long = 0L ) : ProcBuffer =
+      ProcGraphBuilder.local.bufCue( path, startFrame )
 //   def bufCue( name: String, p: ProcParamString ) : ProcBuffer =
 //      ProcFactoryBuilder.local.bufCue( name, p )
    def bufEmpty( numFrames: Int, numChannels: Int = 1 ) : ProcBuffer =
@@ -180,6 +190,16 @@ object DSL {
    implicit def procToAudioOutput( p: Proc ) : ProcAudioOutput = p.audioOutput( "out" )
    implicit def procToAudioInOut( p: Proc ) : (ProcAudioInput, ProcAudioOutput) =
       p.audioInput( "in" ) -> p.audioOutput( "out" )
+
+//   implicit def geToReply( ge: GE ) : ServerReplyValue = {
+//      val res = ge match {
+//         case VDiskIn( _, _, _, _, Constant( constID )) =>
+//         case SendTrig( _, _, Constant( constID ), _ )  =>
+//         // case SendReply( ... ) -- how to handle multiple channels?
+//         case _ => error( "Cannot construct constant reply pattern for " + ge )
+//      }
+//      res
+//   }
 }
 
 trait ProcBuffer {

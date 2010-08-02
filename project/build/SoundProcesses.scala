@@ -2,7 +2,7 @@ import xml._
 import sbt.{ FileUtilities => FU, _}
 
 /**
- *    @version 0.12, 17-Jul-10
+ *    @version 0.14, 02-Aug-10
  */
 class SoundProcessesProject( info: ProjectInfo ) extends DefaultProject( info ) {
    // stupidly, we need to redefine the dependancy here, because

@@ -30,7 +30,7 @@ package de.sciss.synth.proc
 
 object SoundProcesses {
    val name          = "SoundProcesses"
-   val version       = 0.12
+   val version       = 0.14
    val copyright     = "(C)opyright 2010 Hanns Holger Rutz"
    def versionString = (version + 0.001).toString.substring( 0, 4 )
 
@@ -70,6 +70,27 @@ object SoundProcesses {
       import de.sciss.synth.ugen._
 
       ProcTxn.atomic { implicit tx =>
+         val disk = gen( "Disk" ) {
+            val pspeed  = pControl( "speed", ParamSpec( 0.1f, 10, ExpWarp ), 1 )
+            val ppos    = pScalar( "pos",  ParamSpec( 0, 1 ), 0 )
+            graph {
+               val path       = "/Users/rutz/Desktop/Cupola/audio_work/material/lalaConlalaQuadNoAtkSt.aif"
+               val afSpec     = audioFileSpec( path )
+               val startPos   = ppos.v
+               val startFrame = (startPos * afSpec.numFrames).toLong 
+               val buf        = bufCue( path, startFrame )
+               val bufID      = buf.id
+               val speed      = pspeed.kr * BufRateScale.ir( bufID )
+               val d          = VDiskIn.ar( afSpec.numChannels, bufID, speed, loop = 1 )
+//               val frame   = d.reply
+//               (frame.carry( pspeed.v * b.sampleRate ) / b.numFrames) ~> ppos
+               val liveFrame  = Integrator.ar( K2A.ar( speed ))
+               val livePos    = ((liveFrame / BufFrames.ir( bufID )) + startPos) % 1.0f
+//               livePos ~> ppos
+               d
+            }
+         }
+
          val achil = filter( "Achil") {
             val pspeed  = pAudio( "speed", ParamSpec( 0.125, 2.3511, ExpWarp ), 0.5 )
             val pmix    = pAudio( "mix", ParamSpec( 0, 1 ), 1 )

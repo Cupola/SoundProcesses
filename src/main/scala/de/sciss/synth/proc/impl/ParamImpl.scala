@@ -30,11 +30,31 @@ package de.sciss.synth.proc.impl
 
 import de.sciss.synth._
 import de.sciss.synth.proc._
-import de.sciss.synth.ugen.{Out, In}
+import de.sciss.synth.ugen.{ In, Out }
 
 /**
- *    @version 0.12, 09-Jul-10
+ *    @version 0.13, 02-Aug-10
  */
+class ParamScalarImpl( val name: String, val spec: ParamSpec, val default: Double )
+extends ProcParamScalar {
+   def ir : GE = {
+      val p             = Proc.local
+      val pb            = ProcGraphBuilder.local
+      implicit val tx   = pb.tx
+      val c             = p.control( name )
+      pb.includeParam( this )
+      name.ir( default )
+   }
+
+   def v : Double = {
+      val p             = Proc.local
+      val pb            = ProcGraphBuilder.local
+      implicit val tx   = pb.tx
+      val c             = p.control( name )
+      c.v
+   }
+}
+
 class ParamControlImpl( val name: String, val spec: ParamSpec, val default: Double )
 extends ProcParamControl {
    def kr : GE = {
@@ -75,8 +95,8 @@ extends ProcParamAudio {
    }
 }
 
-class ParamStringImpl( val name: String, val default: Option[ String ])
-extends ProcParamString
+//class ParamStringImpl( val name: String, val default: Option[ String ])
+//extends ProcParamString
 
 class ParamAudioInputImpl( val name: String, val default: Option[ RichAudioBus ], val physical: Boolean )
 extends ProcParamAudioInput {

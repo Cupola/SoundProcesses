@@ -63,6 +63,11 @@ trait ProcParamFloat extends ProcParam {
 //   def rate : Rate
 //}
 
+trait ProcParamScalar extends ProcParamFloat {
+   def ir : GE
+   def v : Double
+}
+
 trait ProcParamControl extends ProcParamFloat {
    def kr : GE
 //   = {
@@ -79,9 +84,9 @@ trait ProcParamAudio extends ProcParamFloat {
 //   }
 }
 
-trait ProcParamString extends ProcParam {
-// XXX defaults???
-}
+//trait ProcParamString extends ProcParam {
+//// XXX defaults???
+//}
 
 sealed trait ProcParamAudioBus extends ProcParam {
 //   def index : GE = {

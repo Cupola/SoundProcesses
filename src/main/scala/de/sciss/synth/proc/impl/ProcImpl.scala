@@ -31,11 +31,11 @@ package de.sciss.synth.proc.impl
 import de.sciss.synth.proc._
 import collection.breakOut
 import collection.immutable.{ IndexedSeq => IIdxSeq, Set => ISet }
-import de.sciss.synth.{ audio => arate, control => krate, _ }
+import de.sciss.synth.{ audio => arate, control => krate, scalar => irate, _ }
 import ugen.Line
 
 /**
- *    @version 0.12, 20-Jul-10
+ *    @version 0.14, 02-Aug-10
  */
 class ProcImpl( fact: FactoryImpl, val server: Server )
 extends Proc {
@@ -47,7 +47,7 @@ extends Proc {
 //   private val groupVar          = Ref[ Option[ RichGroup ]]( None )
 //   private val playGroupVar      = Ref[ Option[ RichGroup ]]( None )
    private val groupsRef         = Ref[ Option[ AllGroups ]]( None )
-   private val pStringValues     = Ref( Map.empty[ ProcParamString, String ])
+//   private val pStringValues     = Ref( Map.empty[ ProcParamString, String ])
    private val stateRef          = Ref( State( true ))
    private val backRef           = Ref[ Option[ RichGroup ]]( None )
 
@@ -56,6 +56,7 @@ extends Proc {
    lazy val controls             = fact.params.collect {
       case pControl: ProcParamControl  => new ControlImpl( proc, pControl, krate )
       case pAudio: ProcParamAudio      => new ControlImpl( proc, pAudio, arate )
+      case pScalar: ProcParamScalar    => new ControlImpl( proc, pScalar, irate )
    }
    private lazy val controlMap: Map[ String, ProcControl ] = controls.map( c => (c.name -> c) )( breakOut )
 
@@ -80,18 +81,18 @@ extends Proc {
       audioOutputs.flatMap( _.edges )( breakOut )
    }
 
-   def setString( name: String, value: String )( implicit tx: ProcTxn ) : Proc = {
-      val p = fact.paramMap( name ).asInstanceOf[ ProcParamString ]
-      pStringValues.transform( _ + (p -> value) )
-      runningRef().foreach( _.setString( name, value ))
-      this
-   }
-
-    def getString( name: String )( implicit tx: ProcTxn ) : String = {
-       val p = fact.paramMap( name ).asInstanceOf[ ProcParamString ]
-//          pStringValues().get( p ).getOrElse( p.default.getOrElse( pError( name )))
-       pStringValues().get( p ).getOrElse( pError( name ))
-   }
+//   def setString( name: String, value: String )( implicit tx: ProcTxn ) : Proc = {
+//      val p = fact.paramMap( name ).asInstanceOf[ ProcParamString ]
+//      pStringValues.transform( _ + (p -> value) )
+//      runningRef().foreach( _.setString( name, value ))
+//      this
+//   }
+//
+//    def getString( name: String )( implicit tx: ProcTxn ) : String = {
+//       val p = fact.paramMap( name ).asInstanceOf[ ProcParamString ]
+////          pStringValues().get( p ).getOrElse( p.default.getOrElse( pError( name )))
+//       pStringValues().get( p ).getOrElse( pError( name ))
+//   }
 
 //   def runningGroup( implicit tx: ProcTxn ) : RichGroup =
 //      groupsRef().map( all => all.front.map( _.core ).getOrElse( all.main )).getOrElse( RichGroup.default( server ))

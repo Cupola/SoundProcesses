@@ -59,6 +59,13 @@ extends ProcFactoryBuilder {
 
    @inline private def requireOngoing = require( !finished, "ProcFactory build has finished" )
 
+   def pScalar( name: String, spec: ParamSpec, default: Double ) : ProcParamScalar = {
+      requireOngoing
+      val p = new ParamScalarImpl( name, spec, default )
+      addParam( p )
+      p
+   }
+
    def pControl( name: String, spec: ParamSpec, default: Double ) : ProcParamControl = {
       requireOngoing
       val p = new ParamControlImpl( name, spec, default )
@@ -73,12 +80,12 @@ extends ProcFactoryBuilder {
       p
    }
 
-   def pString( name: String, default: Option[ String ]) : ProcParamString = {
-      requireOngoing
-      val p = new ParamStringImpl( name, default )
-      addParam( p )
-      p
-   }
+//   def pString( name: String, default: Option[ String ]) : ProcParamString = {
+//      requireOngoing
+//      val p = new ParamStringImpl( name, default )
+//      addParam( p )
+//      p
+//   }
 
    def pAudioIn( name: String, default: Option[ RichAudioBus ]) : ProcParamAudioInput = {
       requireOngoing

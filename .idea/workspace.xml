@@ -2,25 +2,29 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" readonly="true" id="f73d71e1-17e4-441e-b380-776f21955f0b" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/notes/TODO.txt" afterPath="$PROJECT_DIR$/notes/TODO.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/ParamImpl.scala" afterPath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/ParamImpl.scala" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/Expr.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/ProcParam.scala" afterPath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/ProcParam.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/GraphBuilderImpl.scala" afterPath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/GraphBuilderImpl.scala" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/SoundProcesses.scala" afterPath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/SoundProcesses.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/notes/Bypass.txt" afterPath="$PROJECT_DIR$/notes/Bypass.txt" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/ProcImpl.scala" afterPath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/ProcImpl.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/FactoryImpl.scala" afterPath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/FactoryImpl.scala" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/ant.xml" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/ProcWorld.scala" afterPath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/ProcWorld.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/AudioBusImpl.scala" afterPath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/AudioBusImpl.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/ProcTxn.scala" afterPath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/ProcTxn.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/SoundProcesses.iml" afterPath="$PROJECT_DIR$/SoundProcesses.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/RunningGraphImpl.scala" afterPath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/RunningGraphImpl.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/BufferImpl.scala" afterPath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/BufferImpl.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/ProcGraph.scala" afterPath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/ProcGraph.scala" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/UGenReply.scala" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/UGenReplyImpl.scala" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/FactoryBuilderImpl.scala" afterPath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/FactoryBuilderImpl.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/Topology.scala" afterPath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/Topology.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/project/build/SoundProcesses.scala" afterPath="$PROJECT_DIR$/project/build/SoundProcesses.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/DSL.scala" afterPath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/DSL.scala" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/project/build.properties" afterPath="$PROJECT_DIR$/project/build.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/ProcRunning.scala" afterPath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/ProcRunning.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/ProcFactoryBuilder.scala" afterPath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/ProcFactoryBuilder.scala" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/Proc.scala" afterPath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/Proc.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/Ref.scala" afterPath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/Ref.scala" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/AudioFileCache.scala" />
     </list>
-    <ignored path="SoundProcesses.iws" />
     <ignored path=".idea/workspace.xml" />
+    <ignored path="SoundProcesses.iws" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -76,7 +80,100 @@
   </component>
   <component name="FileColors" enabled="true" enabledForTabs="true" />
   <component name="FileEditorManager">
-    <leaf />
+    <leaf>
+      <file leaf-file-name="SoundProcesses.scala" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/SoundProcesses.scala">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="32" column="27" selection-start="1103" selection-end="1103" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Proc.scala" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/Proc.scala">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="82" column="0" selection-start="3326" selection-end="3475" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SoundProcesses.scala" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/project/build/SoundProcesses.scala">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="23" column="0" selection-start="1051" selection-end="1051" vertical-scroll-proportion="0.0">
+              <folding>
+                <marker date="1280759354000" expanded="true" signature="51:89" placeholder="/**...*/" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="build.properties" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/project/build.properties">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="5" column="20" selection-start="146" selection-end="146" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ProcImpl.scala" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/ProcImpl.scala">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="37" column="27" selection-start="1266" selection-end="1266" vertical-scroll-proportion="0.2244898">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ProcRunning.scala" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/ProcRunning.scala">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="34" column="27" selection-start="1138" selection-end="1138" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="RunningGraphImpl.scala" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/RunningGraphImpl.scala">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="62" column="0" selection-start="1947" selection-end="1947" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="BufferImpl.scala" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/BufferImpl.scala">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="58" column="20" selection-start="1932" selection-end="1932" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ParamImpl.scala" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/ParamImpl.scala">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="99" column="0" selection-start="3030" selection-end="3130" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ProcParam.scala" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/ProcParam.scala">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="67" column="8" selection-start="1978" selection-end="1978" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="FindManager">
     <FindUsagesManager>
@@ -90,6 +187,21 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
+        <option value="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/ProcGraph.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/ProcFactoryBuilder.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/DSL.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/AudioFileCache.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/GraphBuilderImpl.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/FactoryBuilderImpl.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/BufferImpl.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/ProcParam.scala" />
+        <option value="$PROJECT_DIR$/project/build/SoundProcesses.scala" />
+        <option value="$PROJECT_DIR$/project/build.properties" />
+        <option value="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/ProcRunning.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/RunningGraphImpl.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/ParamImpl.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/SoundProcesses.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/Proc.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/ProcImpl.scala" />
       </list>
     </option>
@@ -129,9 +241,8 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Favorites" />
       <pane id="Scope" />
-      <pane id="PackagesPane" />
+      <pane id="Favorites" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -161,6 +272,182 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SoundProcesses" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SoundProcesses" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="scala" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="proc" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SoundProcesses" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SoundProcesses" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="scala" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="proc" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ProcParam.scala" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.ClassesTreeStructureProvider$PsiClassOwnerTreeNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SoundProcesses" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SoundProcesses" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="scala" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="proc" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ProcGraph.scala" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.ClassesTreeStructureProvider$PsiClassOwnerTreeNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SoundProcesses" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SoundProcesses" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="scala" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="proc" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ProcFactoryBuilder.scala" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.ClassesTreeStructureProvider$PsiClassOwnerTreeNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SoundProcesses" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SoundProcesses" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="scala" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="proc" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Proc.scala" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.ClassesTreeStructureProvider$PsiClassOwnerTreeNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SoundProcesses" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SoundProcesses" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="scala" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="proc" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="impl" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -216,6 +503,7 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -243,6 +531,55 @@
       <method>
         <option name="AntTarget" enabled="false" />
         <option name="BuildArtifacts" enabled="false" />
+        <option name="Maven.BeforeRunTask" enabled="false" />
+      </method>
+    </configuration>
+    <configuration default="true" type="SpecsRunConfiguration" factoryName="Specs">
+      <module name="" />
+      <setting name="path" value="" />
+      <setting name="vmparams" value="" />
+      <setting name="params" value="" />
+      <setting name="packagepath" value="" />
+      <setting name="workingDirectory" value="$PROJECT_DIR$" />
+      <setting name="sysFilter" value=".*" />
+      <setting name="exampleFilter" value=".*" />
+      <method>
+        <option name="AntTarget" enabled="false" />
+        <option name="BuildArtifacts" enabled="false" />
+        <option name="Make" enabled="true" />
+        <option name="Maven.BeforeRunTask" enabled="false" />
+      </method>
+    </configuration>
+    <configuration default="true" type="TestNG" factoryName="TestNG">
+      <extension name="snapshooter" />
+      <module name="" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="SUITE_NAME" />
+      <option name="PACKAGE_NAME" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="METHOD_NAME" />
+      <option name="GROUP_NAME" />
+      <option name="TEST_OBJECT" value="CLASS" />
+      <option name="VM_PARAMETERS" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" />
+      <option name="OUTPUT_DIRECTORY" />
+      <option name="ANNOTATION_TYPE" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <option name="USE_DEFAULT_REPORTERS" value="false" />
+      <option name="PROPERTIES_FILE" />
+      <envs />
+      <properties />
+      <listeners />
+      <method>
+        <option name="AntTarget" enabled="false" />
+        <option name="BuildArtifacts" enabled="false" />
+        <option name="Make" enabled="true" />
         <option name="Maven.BeforeRunTask" enabled="false" />
       </method>
     </configuration>
@@ -309,6 +646,21 @@
         <option name="Maven.BeforeRunTask" enabled="false" />
       </method>
     </configuration>
+    <configuration default="true" type="ScalaTestRunConfiguration" factoryName="ScalaTest">
+      <module name="" />
+      <setting name="path" value="" />
+      <setting name="package" value="" />
+      <setting name="vmparams" value="" />
+      <setting name="params" value="" />
+      <setting name="version" value="false" />
+      <setting name="workingDirectory" value="$PROJECT_DIR$" />
+      <method>
+        <option name="AntTarget" enabled="false" />
+        <option name="BuildArtifacts" enabled="false" />
+        <option name="Make" enabled="true" />
+        <option name="Maven.BeforeRunTask" enabled="false" />
+      </method>
+    </configuration>
     <list size="0" />
     <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
       <Host>localhost</Host>
@@ -334,21 +686,22 @@
     <supportedVersion>125</supportedVersion>
   </component>
   <component name="ToolWindowManager">
-    <frame x="16" y="22" width="1380" height="878" extended-state="0" />
+    <frame x="198" y="22" width="1385" height="878" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
-      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24943651" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32908162" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2709581" sideWeight="0.6619898" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -386,17 +739,121 @@
   <component name="XDebuggerManager">
     <breakpoint-manager />
   </component>
+  <component name="antWorkspaceConfiguration">
+    <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
+    <option name="FILTER_TARGETS" value="false" />
+  </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/ProcImpl.scala">
+    <entry file="file://$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/ProcGraph.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="322" column="46" selection-start="12008" selection-end="12008" vertical-scroll-proportion="0.9933775">
+        <state line="52" column="45" selection-start="1583" selection-end="1583" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/ProcFactoryBuilder.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="42" column="27" selection-start="1506" selection-end="1506" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/DSL.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="47" column="33" selection-start="1466" selection-end="1466" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/AudioFileCache.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="54" column="0" selection-start="1756" selection-end="1756" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/FactoryBuilderImpl.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="70" column="22" selection-start="2657" selection-end="2673" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/GraphBuilderImpl.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="36" column="17" selection-start="1046" selection-end="1059" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/BufferImpl.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="58" column="20" selection-start="1932" selection-end="1932" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/ProcParam.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="67" column="8" selection-start="1978" selection-end="1978" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/project/build/SoundProcesses.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+        <state line="23" column="0" selection-start="1051" selection-end="1051" vertical-scroll-proportion="0.0">
+          <folding>
+            <marker date="1280759354000" expanded="true" signature="51:89" placeholder="/**...*/" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/project/build.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="5" column="20" selection-start="146" selection-end="146" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/ProcRunning.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="34" column="27" selection-start="1138" selection-end="1138" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/RunningGraphImpl.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="62" column="0" selection-start="1947" selection-end="1947" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/ParamImpl.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="99" column="0" selection-start="3030" selection-end="3130" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/SoundProcesses.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="32" column="27" selection-start="1103" selection-end="1103" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/Proc.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="82" column="0" selection-start="3326" selection-end="3475" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/ProcImpl.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="37" column="27" selection-start="1266" selection-end="1266" vertical-scroll-proportion="0.2244898">
           <folding />
         </state>
       </provider>
