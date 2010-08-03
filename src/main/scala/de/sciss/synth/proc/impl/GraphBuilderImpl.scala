@@ -6,7 +6,7 @@ import collection.breakOut
 import collection.immutable.{ Queue => IQueue }
 
 /**
- *    @version 0.11, 12-Jul-10
+ *    @version 0.12, 03-Aug-10
  */
 class GraphBuilderImpl( graph: GraphImpl, val tx: ProcTxn ) extends ProcGraphBuilder {
 //      var controls   = Set.empty[ ControlSetMap ]
@@ -51,40 +51,41 @@ class GraphBuilderImpl( graph: GraphImpl, val tx: ProcTxn ) extends ProcGraphBui
          val bufs          = bufSeq.map( _.create( server ))
 
          var setMaps       = Vector.empty[ ControlSetMap ]  // warning: rs.newMsg doesn't support setn style! XXX
-         var accessories   = IQueue.empty[ TxnPlayer ]
-         var audioInputs   = IQueue.empty[ (RichAudioBus, String) ]
-         var audioOutputs  = IQueue.empty[ (RichAudioBus, String) ]
-         var useCore       = false
+         var accessories   = IQueue.empty[ RichSynth => AudioBusPlayerImpl ]
 
          usedParams.foreach( _ match {
             case pFloat: ProcParamFloat => {
                val name = pFloat.name
-               val cv    = p.control( name ).cv
+               val cv   = p.control( name ).cv
                cv.mapping match {
                   case None => setMaps :+= SingleControlSetMap( name, cv.target.toFloat )
-                  case Some( m ) => {
-                     accessories = accessories.enqueue( m )
-                     useCore     = true
+                  case Some( m ) => m.mapBus match {
+                     case rab: RichAudioBus => {
+                        accessories = accessories.enqueue( rs => AudioBusPlayerImpl( m, rs.map( rab -> name )))
+//                        audioMappings  = audioMappings.enqueue( rab -> name )
+                     }
+                     case rcb: RichControlBus => {
+                        println( "WARNING: Mapping to control bus not yet supported" )
+                        setMaps :+= SingleControlSetMap( name, cv.target.toFloat )
+                     }
                   }
                }
             }
-//            case pAudioBus: ProcParamAudioInput => {
-//               setMaps :+= SingleControlSetMap(
-//                  pAudioBus.name, p.audioInput( pAudioBus.name ).bus.get.busOption.get.index )
-//            }
             case pAudioBus: ProcParamAudioInput => {
-               val b       = p.audioInput( pAudioBus.name )
-               accessories = accessories.enqueue( b )
-               audioInputs = audioInputs enqueue (b.bus.get -> pAudioBus.name)
+               val name       = pAudioBus.name
+               val b          = p.audioInput( name )
+               val rab        = b.bus.get
+               accessories    = accessories.enqueue( rs => AudioBusPlayerImpl( b, rs.read( rab -> name )))
+//               accessories    = accessories.enqueue( b )
+//               audioInputs    = audioInputs.enqueue( b.bus.get -> name )
             }
-//            case pAudioBus: ProcParamAudioOutput => {
-//               setMaps :+= SingleControlSetMap(
-//                  pAudioBus.name, p.audioOutput( pAudioBus.name ).bus.get.busOption.get.index )
-//            }
             case pAudioBus: ProcParamAudioOutput => {
-               val b       = p.audioOutput( pAudioBus.name )
-               accessories  = accessories.enqueue( b )
-               audioOutputs = audioOutputs enqueue (b.bus.get -> pAudioBus.name)
+               val name       = pAudioBus.name
+               val b          = p.audioOutput( name )
+               val rab        = b.bus.get
+               accessories    = accessories.enqueue( rs => AudioBusPlayerImpl( b, rs.write( rab -> name )))
+//               accessories    = accessories.enqueue( b )
+//               audioOutputs   = audioOutputs.enqueue( b.bus.get -> name )
             }
             case x => println( "Ooops. what parameter is this? " + x ) // scalac doesn't check exhaustion...
          })
@@ -94,18 +95,27 @@ class GraphBuilderImpl( graph: GraphImpl, val tx: ProcTxn ) extends ProcGraphBui
          setMaps ++= bufsZipped.map( tup => SingleControlSetMap( tup._1.controlName, tup._2.buf.id ))
          val rs = rsd.play( target, setMaps, addAction, bufs )
 
-         accessories.foreach( _.play ) // stop is in RunningGraphImpl
-         var busMap: Map[ String, AudioBusNodeSetter ] =
-                    audioInputs.map(  tup => tup._2 -> rs.read(  tup ))( breakOut )
-         busMap ++= audioOutputs.map( tup => tup._2 -> rs.write( tup ))
+         val accMap: Map[ String, AudioBusPlayerImpl ] = accessories.map( fun => {
+            val abp = fun( rs )
+            abp.player.play // stop is in RunningGraphImpl
+            abp.setter.controlName -> abp
+         })( breakOut )
 
-//println( "play " + p.name + " ; busses = " + busMap )
+//         val busMap = {
+//            val i: Map[ String, AudioBusNodeSetter ] = audioInputs.map( tup => tup._2 -> rs.read( tup ))( breakOut )
+//            i
+//         } ++ {
+//            val o: Map[ String, AudioBusNodeSetter ] = audioOutputs.map( tup => tup._2 -> rs.write( tup ))( breakOut )
+//            o
+//         } ++ {
+//            val m: Map[ String, AudioBusNodeSetter ] = audioMappings.map( tup => tup._2 -> rs.map( tup ))( breakOut )
+//         }
 
-         bufsZipped.foreach( tup => {
+         bufsZipped foreach { tup =>
             val (b, rb) = tup
             b.disposeWith( rb, rs )        // XXX should also go in RunningGraphImpl
-         })
-         new RunningGraphImpl( rs, accessories, busMap )
+         }
+         new RunningGraphImpl( rs, accMap )
       }
    }
 }

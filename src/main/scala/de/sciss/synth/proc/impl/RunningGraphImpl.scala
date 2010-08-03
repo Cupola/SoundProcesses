@@ -32,22 +32,13 @@ import de.sciss.synth.AudioBus
 import collection.immutable.{ Seq => ISeq }
 import de.sciss.synth.proc._
 
-class RunningGraphImpl( rs: RichSynth, accessories: ISeq[ TxnPlayer ], busMap: Map[ String, AudioBusNodeSetter ])
+/**
+ *    @version 0.11, 03-Aug-10
+ */
+class RunningGraphImpl( rs: RichSynth, _accMap: Map[ String, AudioBusPlayerImpl ])
 extends ProcRunning {
 
-   private val busMapRef = Ref( busMap )
-
-//   import ProcRunning._
-
-//   rs.synth.onEnd {
-//      ProcTxn.atomic { implicit tx =>
-////         if( rs.isOnline.get ) {
-//            mappings.foreach( _.stop )
-////            dispatch( Stopped )
-////         }
-//      }
-//      dispatch( Stopped ) // XXX eventually do away with this
-//   }
+   private val accMapRef = Ref( _accMap )
 
    def anchorNode( implicit tx: ProcTxn ) : RichNode = rs
 
@@ -57,21 +48,49 @@ extends ProcRunning {
          case glide: Glide => error( "NOT YET SUPPORTED" )
          case xfade: XFade => // nada. Proc calls setGroup already
       }
-      accessories.foreach( _.stop )
+      accMapRef().foreach( _._2.player.stop )
    }
 
-//   def setString( name: String, value: String )( implicit tx: ProcTxn ) { error( "not yet supported" )}
-
-   def setFloat( name: String, value: Float )( implicit tx: ProcTxn ) {
-      rs.set( true, name -> value )
+   def controlChanged( ctrl: ProcControl, newValue: ControlValue )( implicit tx: ProcTxn ) {
+      val acc  = accMapRef()
+      val name = ctrl.name
+      acc.get( name ) map { abp =>
+         newValue.mapping match {
+            case None => {
+               abp.setter.remove
+               rs.set( true, ctrl.name -> newValue.current.toFloat )
+               accMapRef.set( acc - name )
+            }
+            case Some( m ) => {
+               val newABus = m.mapBus match {
+                  case rab: RichAudioBus => rab
+                  case _ => error( "NOT YET IMPLEMENTED" )
+               }
+               accMapRef.set( acc + (name -> abp.copy( setter = abp.setter.migrateTo( newABus ))))
+            }
+         }
+      }  getOrElse {
+         newValue.mapping match {
+            case None => rs.set( true, ctrl.name -> newValue.current.toFloat )
+            case Some( m ) => {
+               val newABus = m.mapBus match {
+                  case rab: RichAudioBus => rab
+                  case _ => error( "NOT YET IMPLEMENTED" )
+               }
+               val abp = AudioBusPlayerImpl( m, rs.map( newABus -> name ))
+               accMapRef.set( acc + (name -> abp) )
+            }
+         }
+      }
    }
 
-   def busChanged( name: String, newBus: Option[ RichAudioBus ])( implicit tx: ProcTxn ) {
-      val bm = busMapRef()
-      bm.get( name ).foreach( setter => {
+   def busChanged( pbus: ProcAudioBus, newBus: Option[ RichAudioBus ])( implicit tx: ProcTxn ) {
+      val acc  = accMapRef()
+      val name = pbus.name
+      acc.get( name ) foreach { abp =>
          val newABus = newBus.getOrElse( error( "Bus is used and hence must be defined : " + name ))
-         busMapRef.set( bm + (name -> setter.migrateTo( newABus )))
-      })
+         accMapRef.set( acc + (name -> abp.copy( setter = abp.setter.migrateTo( newABus ))))
+      }
    }
 
    def setGroup( g: RichGroup )( implicit tx: ProcTxn ) {

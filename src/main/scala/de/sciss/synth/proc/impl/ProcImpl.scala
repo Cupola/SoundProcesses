@@ -449,20 +449,10 @@ println( this.toString + " :: OLD STATE : " + oldState + " -> NEW STATE : " + ne
    def isPlaying( implicit tx: ProcTxn ) : Boolean = stateRef().playing
 
    private[proc] def controlChanged( ctrl: ProcControl, newValue: ControlValue )( implicit tx: ProcTxn ) {
-      runningRef().foreach( run => {
-         newValue.mapping match {
-            case None      => run.setFloat( ctrl.name, newValue.current.toFloat )
-            case Some( m ) => m.play 
-         }
-      })
+      runningRef().foreach( _.controlChanged( ctrl, newValue ))
       touch
       updateRef.transform( u => u.copy( controls = u.controls + (ctrl -> newValue) ))
    }
-
-//   private[proc] def controlMapped( ctrl: ProcControl, newValue: Option[ ProcControlMapping ])( implicit tx: ProcTxn ) {
-//      touch
-//      update.transform( u => u.copy( mappings = u.mappings + (ctrl -> newValue) ))
-//   }
 
    private[proc] def audioBusConnected( e: ProcEdge )( implicit tx: ProcTxn ) {
       touch
@@ -482,8 +472,8 @@ println( this.toString + " :: OLD STATE : " + oldState + " -> NEW STATE : " + ne
       })
    }
 
-   private[proc] def busChanged( bus: ProcAudioBus, newBus: Option[ RichAudioBus ])( implicit tx: ProcTxn ) {
-      runningRef().foreach( _.busChanged( bus.name, newBus ))
+   private[proc] def busChanged( pbus: ProcAudioBus, newBus: Option[ RichAudioBus ])( implicit tx: ProcTxn ) {
+      runningRef().foreach( _.busChanged( pbus, newBus ))
    }
 
    override def toString = "proc(" + name + ")"

@@ -35,8 +35,12 @@ object SoundProcesses {
    def versionString = (version + 0.001).toString.substring( 0, 4 )
 
    def main( args: Array[ String ]) {
-      printInfo
-      System.exit( 1 )
+      if( (args.size > 0) && (args( 0 ) == "--test2") ) {
+         test2
+      } else {
+         printInfo
+         System.exit( 1 )
+      }
    }
 
    def printInfo {
@@ -63,6 +67,38 @@ object SoundProcesses {
 //      val topo13 = topo12.removeVertex( "D" )
 //      println( "done" )
 //   }
+
+   def test2 {
+      import DSL._
+      import de.sciss.synth._
+      import de.sciss.synth.ugen._
+      import ProcTxn.{ atomic => t }
+
+      Server.test { s =>
+         ProcDemiurg.addServer( s )
+         val (p1, p2) = t { implicit tx =>
+            val p1 = (gen( "Mod" ) {
+               graph { SinOsc.ar( 2 )}
+            }).make
+            val p3 = (diff( "Silent" ) {
+               graph { _ => Silent.ar }
+            }).make
+            val p2 = (gen( "Osc" ) {
+               val pfreq = pAudio( "freq", ParamSpec( 100, 10000, ExpWarp ), 441 )
+               graph { SinOsc.ar( pfreq.ar ) * 0.1 }
+            }).make
+            p1 ~> p3
+            p1.play; p2.play; p3.play
+            (p1, p2)
+         }
+
+         t { implicit tx =>
+            xfade( 15 ) {
+               p1 ~> p2.control( "freq" )
+            }
+         }
+      }
+   }
 
    def test {
       import DSL._
