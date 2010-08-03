@@ -81,82 +81,65 @@ abstract class RichNode( val initOnline : Boolean ) extends RichObject {
 
    def server = node.server
 
-   def read( assoc: (RichAudioBus, String) )( implicit tx: ProcTxn ) : AudioBusNodeSetter = read( assoc, true )
-   def read( assoc: (RichAudioBus, String), autoRelease: Boolean )
-           ( implicit tx: ProcTxn ) : AudioBusNodeSetter = {
+   def read( assoc: (RichAudioBus, String) )( implicit tx: ProcTxn ) : AudioBusNodeSetter = {
       val (rb, name) = assoc
       val reader = BusNodeSetter.reader( name, rb, this )
-      registerSetter( reader, autoRelease )
+      registerSetter( reader )
       reader
    }
 
-   def read( assoc: (RichControlBus, String) )( implicit tx: ProcTxn ) : ControlBusNodeSetter = read( assoc, true )
-   def read( assoc: (RichControlBus, String), autoRelease: Boolean )
-           ( implicit tx: ProcTxn ) : ControlBusNodeSetter = {
+   def read( assoc: (RichControlBus, String) )( implicit tx: ProcTxn ) : ControlBusNodeSetter = {
       val (rb, name) = assoc
       val reader = BusNodeSetter.reader( name, rb, this )
-      registerSetter( reader, autoRelease )
+      registerSetter( reader )
       reader
    }
 
-   def write( assoc: (RichAudioBus, String) )( implicit tx: ProcTxn ) : AudioBusNodeSetter = write( assoc, true )
-   def write( assoc: (RichAudioBus, String), autoRelease: Boolean )
-            ( implicit tx: ProcTxn ) : AudioBusNodeSetter = {
+   def write( assoc: (RichAudioBus, String) )( implicit tx: ProcTxn ) : AudioBusNodeSetter = {
       val (rb, name) = assoc
       val writer = BusNodeSetter.writer( name, rb, this )
-      registerSetter( writer, autoRelease )
+      registerSetter( writer )
       writer
    }
 
-   def write( assoc: (RichControlBus, String) )( implicit tx: ProcTxn ) : ControlBusNodeSetter = write( assoc, true )
-   def write( assoc: (RichControlBus, String), autoRelease: Boolean )
-            ( implicit tx: ProcTxn ) : ControlBusNodeSetter = {
+   def write( assoc: (RichControlBus, String) )( implicit tx: ProcTxn ) : ControlBusNodeSetter = {
       val (rb, name) = assoc
       val writer = BusNodeSetter.writer( name, rb, this )
-      registerSetter( writer, autoRelease )
+      registerSetter( writer )
       writer
    }
    
-   def readWrite( assoc: (RichAudioBus, String) )( implicit tx: ProcTxn ) : AudioBusNodeSetter = readWrite( assoc, true )
-   def readWrite( assoc: (RichAudioBus, String), autoRelease: Boolean )
-                ( implicit tx: ProcTxn ) : AudioBusNodeSetter = {
+   def readWrite( assoc: (RichAudioBus, String) )( implicit tx: ProcTxn ) : AudioBusNodeSetter = {
       val (rb, name) = assoc
       val rw = BusNodeSetter.readerWriter( name, rb, this )
-      registerSetter( rw, autoRelease )
+      registerSetter( rw )
       rw
    }
 
-   def readWrite( assoc: (RichControlBus, String) )( implicit tx: ProcTxn ) : ControlBusNodeSetter = readWrite( assoc, true )
-   def readWrite( assoc: (RichControlBus, String), autoRelease: Boolean = true )
-                ( implicit tx: ProcTxn ) : ControlBusNodeSetter = {
+   def readWrite( assoc: (RichControlBus, String) )( implicit tx: ProcTxn ) : ControlBusNodeSetter = {
       val (rb, name) = assoc
       val rw = BusNodeSetter.readerWriter( name, rb, this )
-      registerSetter( rw, autoRelease )
+      registerSetter( rw )
       rw
    }
 
-   def map( assoc: (RichAudioBus, String) )( implicit tx: ProcTxn ) : AudioBusNodeSetter = map( assoc, true )
-   def map( assoc: (RichAudioBus, String), autoRelease: Boolean )
-           ( implicit tx: ProcTxn ) : AudioBusNodeSetter = {
+   def map( assoc: (RichAudioBus, String) )( implicit tx: ProcTxn ) : AudioBusNodeSetter = {
       val (rb, name) = assoc
       val mapper = BusNodeSetter.mapper( name, rb, this )
-      registerSetter( mapper, autoRelease )
+      registerSetter( mapper )
       mapper
    }
 
-   def map( assoc: (RichControlBus, String) )( implicit tx: ProcTxn ) : ControlBusNodeSetter = map( assoc, true )
-   def map( assoc: (RichControlBus, String), autoRelease: Boolean = true )
-           ( implicit tx: ProcTxn ) : ControlBusNodeSetter = {
+   def map( assoc: (RichControlBus, String) )( implicit tx: ProcTxn ) : ControlBusNodeSetter = {
       val (rb, name) = assoc
       val mapper = BusNodeSetter.mapper( name, rb, this )
-      registerSetter( mapper, autoRelease )
+      registerSetter( mapper )
       mapper
    }
 
-   private def registerSetter( bns: BusNodeSetter, autoRelease: Boolean )
-                             ( implicit tx: ProcTxn ) {
+   private def registerSetter( bns: BusNodeSetter )( implicit tx: ProcTxn ) {
       bns.add
-      if( autoRelease ) onEnd { tx0 => bns.remove( tx0 )}
+      onEnd { tx0 => bns.remove( tx0 )}
    }
 
    def free( audible: Boolean = true )( implicit tx: ProcTxn ) {

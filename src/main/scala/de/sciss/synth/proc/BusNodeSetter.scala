@@ -34,37 +34,46 @@ import de.sciss.synth.{Bus, ControlBus, AudioBus}
  *    @version 0.11, 03-Aug-10
  */
 trait BusNodeSetter {
-   def add( implicit tx: ProcTxn )     : BusNodeSetter
-   def remove( implicit tx: ProcTxn )  : BusNodeSetter
-   def bus: RichBus[ _ ]
+   def add( implicit tx: ProcTxn ) : Unit
+   def remove( implicit tx: ProcTxn ) : Unit
+   def bus: RichBus
+//   def migrateTo( newBus: RichBus )( implicit tx: ProcTxn ) : BusNodeSetter
 }
 
 trait AudioBusNodeSetter extends BusNodeSetter {
-   def add( implicit tx: ProcTxn )     : AudioBusNodeSetter
-   def remove( implicit tx: ProcTxn )  : AudioBusNodeSetter
-   def migrateTo( newBus: RichAudioBus )( implicit tx: ProcTxn ) : AudioBusNodeSetter
    def bus: RichAudioBus
+   def migrateTo( newBus: RichAudioBus )( implicit tx: ProcTxn ) : AudioBusNodeSetter
 }
 
 trait ControlBusNodeSetter extends BusNodeSetter {
-   def add( implicit tx: ProcTxn )     : ControlBusNodeSetter
-   def remove( implicit tx: ProcTxn )  : ControlBusNodeSetter
-   def migrateTo( newBus: RichControlBus )( implicit tx: ProcTxn ) : ControlBusNodeSetter
    def bus: RichControlBus
+   def migrateTo( newBus: RichControlBus )( implicit tx: ProcTxn ) : ControlBusNodeSetter
 }
 
 object BusNodeSetter {
-   def reader( name: String, rb: RichAudioBus, rn: RichNode ) : AudioBusNodeSetter = new AudioReaderImpl( name, rb, rn )
-   def writer( name: String, rb: RichAudioBus, rn: RichNode ) : AudioBusNodeSetter = new AudioWriterImpl( name, rb, rn )
+   def reader( name: String, rb: RichAudioBus, rn: RichNode ) : AudioBusNodeSetter =
+      new AudioReaderImpl( name, rb, rn )
+
+   def reader( name: String, rb: RichControlBus, rn: RichNode ) : ControlBusNodeSetter =
+      new ControlReaderImpl( name, rb, rn )
+
+   def writer( name: String, rb: RichAudioBus, rn: RichNode ) : AudioBusNodeSetter =
+      new AudioWriterImpl( name, rb, rn )
+
+   def writer( name: String, rb: RichControlBus, rn: RichNode ) : ControlBusNodeSetter =
+      new ControlWriterImpl( name, rb, rn )
+
    def readerWriter( name: String, rb: RichAudioBus, rn: RichNode ) : AudioBusNodeSetter =
       new AudioReaderWriterImpl( name, rb, rn )
-   def mapper( name: String, rb: RichAudioBus, rn: RichNode ) : AudioBusNodeSetter = new AudioMapperImpl( name, rb, rn )
 
-   def reader( name: String, rb: RichControlBus, rn: RichNode ) : ControlBusNodeSetter = new ControlReaderImpl( name, rb, rn )
-   def writer( name: String, rb: RichControlBus, rn: RichNode ) : ControlBusNodeSetter = new ControlWriterImpl( name, rb, rn )
    def readerWriter( name: String, rb: RichControlBus, rn: RichNode ) : ControlBusNodeSetter =
       new ControlReaderWriterImpl( name, rb, rn )
-   def mapper( name: String, rb: RichControlBus, rn: RichNode ) : ControlBusNodeSetter = new ControlMapperImpl( name, rb, rn )
+
+   def mapper( name: String, rb: RichAudioBus, rn: RichNode ) : AudioBusNodeSetter =
+      new AudioMapperImpl( name, rb, rn )
+
+   def mapper( name: String, rb: RichControlBus, rn: RichNode ) : ControlBusNodeSetter =
+      new ControlMapperImpl( name, rb, rn )
 
    private trait ImplLike extends BusNodeSetter {
       val added = Ref( false )
@@ -125,32 +134,28 @@ object BusNodeSetter {
    }
 
    private abstract class AbstractAudioReader extends AbstractAudioImpl {
-      def add( implicit tx: ProcTxn ) = {
+      def add( implicit tx: ProcTxn ) {
          val wasAdded = added.swap( true )
          if( wasAdded ) error( "Was already added : " + this )
          bus.addReader( this )
-         this
       }
 
-      def remove( implicit tx: ProcTxn ) = {
+      def remove( implicit tx: ProcTxn ) {
          val wasAdded = added.swap( false )
          if( wasAdded ) bus.removeReader( this )
-         this
       }
    }
 
    private abstract class AbstractControlReader extends AbstractControlImpl {
-      def add( implicit tx: ProcTxn ) = {
+      def add( implicit tx: ProcTxn ) {
          val wasAdded = added.swap( true )
          if( wasAdded ) error( "Was already added : " + this )
          bus.addReader( this )
-         this
       }
 
-      def remove( implicit tx: ProcTxn ) = {
+      def remove( implicit tx: ProcTxn ) {
          val wasAdded = added.swap( false )
          if( wasAdded ) bus.removeReader( this )
-         this
       }
    }
 
@@ -179,32 +184,28 @@ object BusNodeSetter {
    }
 
    private abstract class AbstractAudioWriter extends AbstractAudioImpl {
-      def add( implicit tx: ProcTxn ) = {
+      def add( implicit tx: ProcTxn ) {
          val wasAdded = added.swap( true )
          if( wasAdded ) error( "Was already added : " + this )
          bus.addWriter( this )
-         this
       }
 
-      def remove( implicit tx: ProcTxn ) = {
+      def remove( implicit tx: ProcTxn ) {
          val wasAdded = added.swap( false )
          if( wasAdded ) bus.removeWriter( this )
-         this
       }
    }
 
    private abstract class AbstractControlWriter extends AbstractControlImpl {
-      def add( implicit tx: ProcTxn ) = {
+      def add( implicit tx: ProcTxn ) {
          val wasAdded = added.swap( true )
          if( wasAdded ) error( "Was already added : " + this )
          bus.addWriter( this )
-         this
       }
 
-      def remove( implicit tx: ProcTxn ) = {
+      def remove( implicit tx: ProcTxn ) {
          val wasAdded = added.swap( false )
          if( wasAdded ) bus.removeWriter( this )
-         this
       }
    }
 
@@ -232,21 +233,19 @@ object BusNodeSetter {
          def busChanged( b: AudioBus )( implicit tx: ProcTxn ) {}
       }
 
-      def add( implicit tx: ProcTxn ) = {
+      def add( implicit tx: ProcTxn ) {
          val wasAdded = added.swap( true )
          if( wasAdded ) error( "Was already added : " + this )
          bus.addReader( this )
          bus.addWriter( dummy )
-         this
       }
 
-      def remove( implicit tx: ProcTxn ) = {
+      def remove( implicit tx: ProcTxn ) {
          val wasAdded = added.swap( false )
          if( wasAdded ) {
             bus.removeWriter( dummy )
             bus.removeReader( this )
          }
-         this
       }
 
       def newInstance( name: String, bus: RichAudioBus, rn: RichNode ) = readerWriter( name, bus, rn )
@@ -258,21 +257,19 @@ object BusNodeSetter {
          def busChanged( b: ControlBus )( implicit tx: ProcTxn ) {}
       }
 
-      def add( implicit tx: ProcTxn ) = {
+      def add( implicit tx: ProcTxn ) {
          val wasAdded = added.swap( true )
          if( wasAdded ) error( "Was already added : " + this )
          bus.addReader( this )
          bus.addWriter( dummy )
-         this
       }
 
-      def remove( implicit tx: ProcTxn ) = {
+      def remove( implicit tx: ProcTxn ) {
          val wasAdded = added.swap( false )
          if( wasAdded ) {
             bus.removeWriter( dummy )
             bus.removeReader( this )
          }
-         this
       }
 
       def newInstance( name: String, bus: RichControlBus, rn: RichNode ) = readerWriter( name, bus, rn )

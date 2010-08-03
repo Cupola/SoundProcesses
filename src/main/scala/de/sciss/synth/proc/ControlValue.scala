@@ -25,7 +25,7 @@ case class ControlValue( target: Double, mapping: Option[ ControlMapping ]) {
 }
 
 sealed trait ControlMapping extends TxnPlayer {
-   def mapBus( implicit tx: ProcTxn ) : RichBus[ _ ]
+   def mapBus( implicit tx: ProcTxn ) : RichBus
 }
 
 trait ControlGliding extends ControlMapping {
