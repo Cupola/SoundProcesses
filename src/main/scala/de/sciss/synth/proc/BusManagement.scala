@@ -34,17 +34,53 @@ import de.sciss.synth._
 /**
  *    @version 0.12, 18-Jul-10
  */
-sealed trait RichBus {
+sealed trait RichBus[ B <: Bus ] {
    import RichBus._
 
    def server : Server
    def numChannels : Int
-//   def addReader( u: User )( implicit tx: ProcTxn ) : Unit
-//   def addWriter( u: User )( implicit tx: ProcTxn ) : Unit
-//   def removeReader( u: User )( implicit tx: ProcTxn ) : Unit
-//   def removeWriter( u: User )( implicit tx: ProcTxn ) : Unit
 
-   def busOption( implicit tx: ProcTxn ): Option[ Bus ]
+   type U = RichBus.User[ B ]
+
+   /**
+    *    Adds a reading consumer to the bus. Note that
+    *    the readers are kept in a Set and this method doesn't
+    *    currently check whether the set already contains
+    *    the reader. Adding the same reader more than once
+    *    will cause malbehaviour.
+    *
+    *    As a consequence, the user's busChanged method is
+    *    invoked with the current bus.
+    */
+   def addReader( u: U )( implicit tx: ProcTxn ) : Unit
+
+   /**
+    *    Adds a writing consumer to the bus. Note that
+    *    the writers are kept in a Set and this method doesn't
+    *    currently check whether the set already contains
+    *    the writer. Adding the same writer more than once
+    *    will cause malbehaviour.
+    *
+    *    As a consequence, the user's busChanged method is
+    *    invoked with the current bus.
+    */
+   def addWriter( u: U )( implicit tx: ProcTxn ) : Unit
+
+   /**
+    *    Removes a reading consumer from the bus. It is
+    *    safe to call this method, passing in a user which
+    *    has already been previously removed.
+    */
+   def removeReader( u: U )( implicit tx: ProcTxn ) : Unit
+
+   /**
+    *    Removes a writing consumer from the bus. It is
+    *    safe to call this method, passing in a user which
+    *    has already been previously removed.
+    */
+   def removeWriter( u: U )( implicit tx: ProcTxn ) : Unit
+
+   def busOption( implicit tx: ProcTxn ): Option[ B ]
    def rate : Rate
 }
 
@@ -59,128 +95,125 @@ object RichAudioBus {
     *    bus implementation will push its initial allocation
     *    information to the user.    
     */
-   trait User {
-      def busChanged( bus: AudioBus )( implicit tx: ProcTxn ) : Unit
-//      def migrateTo( newBus: RichAudioBus )( implicit tx: ProcTxn ) : Unit
-   }
+//   trait User {
+//      def busChanged( bus: AudioBus )( implicit tx: ProcTxn ) : Unit
+////      def migrateTo( newBus: RichAudioBus )( implicit tx: ProcTxn ) : Unit
+//   }
+   type User = RichBus.User[ AudioBus ]
 }
 
-trait RichAudioBus extends RichBus with AudioRated {
-   import RichAudioBus._
-
-   def busOption( implicit tx: ProcTxn ): Option[ AudioBus ]
-
-   /**
-    *    Adds a reading consumer to the bus. Note that
-    *    the readers are kept in a Set and this method doesn't
-    *    currently check whether the set already contains
-    *    the reader. Adding the same reader more than once
-    *    will cause malbehaviour.
-    *
-    *    As a consequence, the user's busChanged method is
-    *    invoked with the current bus. The current bus may
-    *    change due to the addition. In this case, busChanged
-    *    is called on all other currently registered users.
-    */
-   def addReader( u: User )( implicit tx: ProcTxn ) : Unit
-
-   /**
-    *    Adds a writing consumer to the bus. Note that
-    *    the writers are kept in a Set and this method doesn't
-    *    currently check whether the set already contains
-    *    the writer. Adding the same writer more than once
-    *    will cause malbehaviour.
-    *
-    *    As a consequence, the user's busChanged method is
-    *    invoked with the current bus. The current bus may
-    *    change due to the addition. In this case, busChanged
-    *    is called on all other currently registered users.
-    */
-   def addWriter( u: User )( implicit tx: ProcTxn ) : Unit
-
-   /**
-    *    Removes a reading consumer from the bus. It is
-    *    safe to call this method, passing in a user which
-    *    has already been previously removed.
-    *
-    *    The current bus may change due to the removal.
-    *    In this case, busChanged is called on all
-    *    remaining registered users.
-    */
-   def removeReader( u: User )( implicit tx: ProcTxn ) : Unit
-
-   /**
-    *    Removes a writing consumer from the bus. It is
-    *    safe to call this method, passing in a user which
-    *    has already been previously removed.
-    *
-    *    The current bus may change due to the removal.
-    *    In this case, busChanged is called on all
-    *    remaining registered users.
-    */
-   def removeWriter( u: User )( implicit tx: ProcTxn ) : Unit
-
-//   def migrateTo( anotherBus: RichAudioBus )( implicit tx: ProcTxn ) : Unit
+trait RichAudioBus extends RichBus[ AudioBus ] with AudioRated {
+//   import RichAudioBus._
 //
-//   protected def add( readers: Iterable[ User ], writers: Iterable[ User ])( implicit tx: ProcTxn ) : Unit
-
-//   def becomeSoundIn : Unit
-//   def becomeSoundOut : Unit
-
-//   def migrateTo( newBus: RichAudioBus )( implicit tx: ProcTxn ) : Unit
+////   def busOption( implicit tx: ProcTxn ): Option[ AudioBus ]
+//
+//   /**
+//    *    Adds a reading consumer to the bus. Note that
+//    *    the readers are kept in a Set and this method doesn't
+//    *    currently check whether the set already contains
+//    *    the reader. Adding the same reader more than once
+//    *    will cause malbehaviour.
+//    *
+//    *    As a consequence, the user's busChanged method is
+//    *    invoked with the current bus. The current bus may
+//    *    change due to the addition. In this case, busChanged
+//    *    is called on all other currently registered users.
+//    */
+//   def addReader( u: User )( implicit tx: ProcTxn ) : Unit
+//
+//   /**
+//    *    Adds a writing consumer to the bus. Note that
+//    *    the writers are kept in a Set and this method doesn't
+//    *    currently check whether the set already contains
+//    *    the writer. Adding the same writer more than once
+//    *    will cause malbehaviour.
+//    *
+//    *    As a consequence, the user's busChanged method is
+//    *    invoked with the current bus. The current bus may
+//    *    change due to the addition. In this case, busChanged
+//    *    is called on all other currently registered users.
+//    */
+//   def addWriter( u: User )( implicit tx: ProcTxn ) : Unit
+//
+//   /**
+//    *    Removes a reading consumer from the bus. It is
+//    *    safe to call this method, passing in a user which
+//    *    has already been previously removed.
+//    *
+//    *    The current bus may change due to the removal.
+//    *    In this case, busChanged is called on all
+//    *    remaining registered users.
+//    */
+//   def removeReader( u: User )( implicit tx: ProcTxn ) : Unit
+//
+//   /**
+//    *    Removes a writing consumer from the bus. It is
+//    *    safe to call this method, passing in a user which
+//    *    has already been previously removed.
+//    *
+//    *    The current bus may change due to the removal.
+//    *    In this case, busChanged is called on all
+//    *    remaining registered users.
+//    */
+//   def removeWriter( u: User )( implicit tx: ProcTxn ) : Unit
 }
 
 object RichControlBus {
-   trait User {
-      def busChanged( bus: ControlBus )( implicit tx: ProcTxn ) : Unit
-   }
+//   trait User {
+//      def busChanged( bus: ControlBus )( implicit tx: ProcTxn ) : Unit
+//   }
+   type User = RichBus.User[ ControlBus ]
 }
 
-trait RichControlBus extends RichBus with ControlRated {
-   import RichControlBus._
-
-   def busOption( implicit tx: ProcTxn ): Option[ ControlBus ]
-
-   /**
-    *    Adds a reading consumer to the bus. Note that
-    *    the readers are kept in a Set and this method doesn't
-    *    currently check whether the set already contains
-    *    the reader. Adding the same reader more than once
-    *    will cause malbehaviour.
-    *
-    *    As a consequence, the user's busChanged method is
-    *    invoked with the current bus.
-    */
-   def addReader( u: User )( implicit tx: ProcTxn ) : Unit
-
-   /**
-    *    Adds a writing consumer to the bus. Note that
-    *    the writers are kept in a Set and this method doesn't
-    *    currently check whether the set already contains
-    *    the writer. Adding the same writer more than once
-    *    will cause malbehaviour.
-    *
-    *    As a consequence, the user's busChanged method is
-    *    invoked with the current bus.
-    */
-   def addWriter( u: User )( implicit tx: ProcTxn ) : Unit
-
-   /**
-    *    Removes a reading consumer from the bus. It is
-    *    safe to call this method, passing in a user which
-    *    has already been previously removed.
-    */
-   def removeReader( u: User )( implicit tx: ProcTxn ) : Unit
-
-   /**
-    *    Removes a writing consumer from the bus. It is
-    *    safe to call this method, passing in a user which
-    *    has already been previously removed.
-    */
-   def removeWriter( u: User )( implicit tx: ProcTxn ) : Unit
+trait RichControlBus extends RichBus[ ControlBus ] with ControlRated {
+//   import RichControlBus._
+//
+//   def busOption( implicit tx: ProcTxn ): Option[ ControlBus ]
+//
+//   /**
+//    *    Adds a reading consumer to the bus. Note that
+//    *    the readers are kept in a Set and this method doesn't
+//    *    currently check whether the set already contains
+//    *    the reader. Adding the same reader more than once
+//    *    will cause malbehaviour.
+//    *
+//    *    As a consequence, the user's busChanged method is
+//    *    invoked with the current bus.
+//    */
+//   def addReader( u: User )( implicit tx: ProcTxn ) : Unit
+//
+//   /**
+//    *    Adds a writing consumer to the bus. Note that
+//    *    the writers are kept in a Set and this method doesn't
+//    *    currently check whether the set already contains
+//    *    the writer. Adding the same writer more than once
+//    *    will cause malbehaviour.
+//    *
+//    *    As a consequence, the user's busChanged method is
+//    *    invoked with the current bus.
+//    */
+//   def addWriter( u: User )( implicit tx: ProcTxn ) : Unit
+//
+//   /**
+//    *    Removes a reading consumer from the bus. It is
+//    *    safe to call this method, passing in a user which
+//    *    has already been previously removed.
+//    */
+//   def removeReader( u: User )( implicit tx: ProcTxn ) : Unit
+//
+//   /**
+//    *    Removes a writing consumer from the bus. It is
+//    *    safe to call this method, passing in a user which
+//    *    has already been previously removed.
+//    */
+//   def removeWriter( u: User )( implicit tx: ProcTxn ) : Unit
 }
 
 object RichBus {
+   trait User[ B <: Bus ] {
+      def busChanged( bus: B )( implicit tx: ProcTxn ) : Unit
+   }
+
    /**
     *    Constructs a new audio bus proxy for use in a shared environment, where
     *    there can be situations of semi-orphaned buses (only one reader or
@@ -306,50 +339,35 @@ object RichBus {
    }
 
    private abstract class AbstractAudioImpl extends RichAudioBus {
-      import RichAudioBus._
+      import RichAudioBus.{ User => AU }
 
-      protected val readers   = Ref( Set.empty[ User ])
-      protected val writers   = Ref( Set.empty[ User ])
+      protected val readers   = Ref( Set.empty[ AU ])
+      protected val writers   = Ref( Set.empty[ AU ])
    }
 
    private case class FixedImpl( bus: AudioBus )
    extends AbstractAudioImpl {
-      import RichAudioBus._
+      import RichAudioBus.{ User => AU }
 
       def server        = bus.server
       def numChannels   = bus.numChannels
 
       def busOption( implicit tx: ProcTxn ) = Some( bus )
 
-      def addReader( u: User )( implicit tx: ProcTxn ) { add( readers, u )}
-      def addWriter( u: User )( implicit tx: ProcTxn ) { add( writers, u )}
+      def addReader( u: AU )( implicit tx: ProcTxn ) { add( readers, u )}
+      def addWriter( u: AU )( implicit tx: ProcTxn ) { add( writers, u )}
 
-      private def add( users: Ref[ Set[ User ]], u: User )( implicit tx: ProcTxn ) {
+      private def add( users: Ref[ Set[ AU ]], u: AU )( implicit tx: ProcTxn ) {
          users.transform( _ + u )
          u.busChanged( bus  )
       }
 
-      def removeReader( u: User )( implicit tx: ProcTxn ) { remove( readers, u )}
-      def removeWriter( u: User )( implicit tx: ProcTxn ) { remove( writers, u )}
+      def removeReader( u: AU )( implicit tx: ProcTxn ) { remove( readers, u )}
+      def removeWriter( u: AU )( implicit tx: ProcTxn ) { remove( writers, u )}
 
-      private def remove( users: Ref[ Set[ User ]], u: User )( implicit tx: ProcTxn ) {
+      private def remove( users: Ref[ Set[ AU ]], u: AU )( implicit tx: ProcTxn ) {
          users.transform( _ - u )
       }
-
-//      def migrateTo( anotherBus: RichAudioBus )( implicit tx: ProcTxn ) {
-//         val r = readers()
-//         val w = writers()
-//         readers.set( Set.empty )
-//         writers.set( Set.empty )
-//         anotherBus.add( r, w )
-//      }
-//
-//      protected def add( r: Iterable[ User ], w: Iterable[ User ])( implicit tx: ProcTxn ) {
-//         readers.transform( _ ++ r )
-//         writers.transform( _ ++ w )
-//         r.foreach( _.busChanged( bus  ))
-//         w.foreach( _.busChanged( bus  ))
-//      }
 
       override def toString = "h-abus(" + bus + ")"
    }
@@ -363,29 +381,14 @@ object RichBus {
          val bh = bus()
          if( bh != null ) Some( bh.bus ) else None
       }
-
-//      // XXX eventually AudioImpl could have an optimized version!
-//      def migrateTo( anotherBus: RichAudioBus )( implicit tx: ProcTxn ) {
-//         val r = readers()
-//         val w = writers()
-//         r.foreach( removeReader( _ ))
-//         w.foreach( removeWriter( _ ))
-//         anotherBus.add( r, w )
-//      }
-//
-//      // XXX eventually AudioImpl could have an optimized version!
-//      protected def add( r: Iterable[ User ], w: Iterable[ User ])( implicit tx: ProcTxn ) {
-//         r.foreach( addReader( _ ))
-//         w.foreach( addWriter( _ ))
-//      }
    }
 
    private class AudioImpl( val server: Server, val numChannels: Int ) extends BasicAudioImpl {
-      import RichAudioBus._
+      import RichAudioBus.{ User => AU }
 
       override def toString = "sh-abus@" + hashCode
 
-      def addReader( u: User )( implicit tx: ProcTxn ) {
+      def addReader( u: AU )( implicit tx: ProcTxn ) {
          val rs   = readers()
          require( !rs.contains( u ))
          val bh   = if( rs.isEmpty ) {
@@ -426,7 +429,7 @@ object RichBus {
          u.busChanged( newBus )
       }
 
-      def addWriter( u: User )( implicit tx: ProcTxn ) {
+      def addWriter( u: AU )( implicit tx: ProcTxn ) {
          val ws   = writers()
          require( !ws.contains( u ))
          val bh   = if( ws.isEmpty ) {
@@ -462,7 +465,7 @@ object RichBus {
          u.busChanged( newBus )
       }
 
-      def removeReader( u: User )( implicit tx: ProcTxn ) {
+      def removeReader( u: AU )( implicit tx: ProcTxn ) {
          val rs0        = readers()
          if( !rs0.contains( u )) return
          val rs         = rs0 - u
@@ -484,7 +487,7 @@ object RichBus {
          }
       }
 
-      def removeWriter( u: User )( implicit tx: ProcTxn ) {
+      def removeWriter( u: AU )( implicit tx: ProcTxn ) {
          val ws0        = writers()
          if( !ws0.contains( u )) return
          val ws         = ws0 - u
@@ -508,16 +511,14 @@ object RichBus {
    }
 
    private class TempAudioImpl( val server: Server, val numChannels: Int ) extends BasicAudioImpl {
-      import RichAudioBus._
+      import RichAudioBus.{ User => AU }
 
       override def toString = "tmp-abus@" + hashCode
 
-      //      private val users = Ref( Set.empty[ User ])
+      def addReader( u: AU )( implicit tx: ProcTxn ) { add( readers, writers, u )}
+      def addWriter( u: AU )( implicit tx: ProcTxn ) { add( writers, readers, u )}
 
-      def addReader( u: User )( implicit tx: ProcTxn ) { add( readers, writers, u )}
-      def addWriter( u: User )( implicit tx: ProcTxn ) { add( writers, readers, u )}
-
-      private def add( users: Ref[ Set[ User ]], others: Ref[ Set[ User ]], u: User )( implicit tx: ProcTxn ) {
+      private def add( users: Ref[ Set[ AU ]], others: Ref[ Set[ AU ]], u: AU )( implicit tx: ProcTxn ) {
          val us = users()
          require( !us.contains( u ))
          // do _not_ check for null
@@ -540,10 +541,10 @@ object RichBus {
          u.busChanged( newBus )
       }
 
-      def removeReader( u: User )( implicit tx: ProcTxn ) { remove( readers, u )}
-      def removeWriter( u: User )( implicit tx: ProcTxn ) { remove( writers, u )}
+      def removeReader( u: AU )( implicit tx: ProcTxn ) { remove( readers, u )}
+      def removeWriter( u: AU )( implicit tx: ProcTxn ) { remove( writers, u )}
 
-      private def remove( users: Ref[ Set[ User ]], u: User )( implicit tx: ProcTxn ) {
+      private def remove( users: Ref[ Set[ AU ]], u: AU )( implicit tx: ProcTxn ) {
          val rw = users()
          if( !rw.contains( u )) return
          users.set( rw - u )
@@ -552,11 +553,11 @@ object RichBus {
    }
 
    private class ControlImpl( val server: Server, val numChannels: Int ) extends RichControlBus {
-      import RichControlBus._
+      import RichControlBus.{ User => CU }
 
       private val bus      = Ref.make[ ControlBusHolder ]
-      private val readers  = Ref( Set.empty[ User ])
-      private val writers  = Ref( Set.empty[ User ])
+      private val readers  = Ref( Set.empty[ CU ])
+      private val writers  = Ref( Set.empty[ CU ])
 
       override def toString = "cbus@" + hashCode
 
@@ -565,10 +566,10 @@ object RichBus {
          if( bh != null ) Some( bh.bus ) else None
       }
 
-      def addReader( u: User )( implicit tx: ProcTxn ) { add( readers, writers, u )}
-      def addWriter( u: User )( implicit tx: ProcTxn ) { add( writers, readers, u )}
+      def addReader( u: CU )( implicit tx: ProcTxn ) { add( readers, writers, u )}
+      def addWriter( u: CU )( implicit tx: ProcTxn ) { add( writers, readers, u )}
 
-      private def add( users: Ref[ Set[ User ]], others: Ref[ Set[ User ]], u: User )( implicit tx: ProcTxn ) {
+      private def add( users: Ref[ Set[ CU ]], others: Ref[ Set[ CU ]], u: CU )( implicit tx: ProcTxn ) {
          val us = users()
          require( !us.contains( u ))
          // do _not_ check for null
@@ -591,10 +592,10 @@ object RichBus {
          u.busChanged( newBus )
       }
 
-      def removeReader( u: User )( implicit tx: ProcTxn ) { remove( readers, u )}
-      def removeWriter( u: User )( implicit tx: ProcTxn ) { remove( writers, u )}
+      def removeReader( u: CU )( implicit tx: ProcTxn ) { remove( readers, u )}
+      def removeWriter( u: CU )( implicit tx: ProcTxn ) { remove( writers, u )}
 
-      private def remove( users: Ref[ Set[ User ]], u: User )( implicit tx: ProcTxn ) {
+      private def remove( users: Ref[ Set[ CU ]], u: CU )( implicit tx: ProcTxn ) {
          val rw = users()
          if( !rw.contains( u )) return
          users.set( rw - u )

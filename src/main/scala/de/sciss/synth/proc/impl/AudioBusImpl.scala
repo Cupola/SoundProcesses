@@ -107,8 +107,8 @@ extends AudioBusImpl with ProcAudioInput {
 //         proc.busChanged( this, bus )
 //      }
 
-   protected def edgeAdded( e: ProcEdge )( implicit tx: ProcTxn ) {} // XXX should still fire
-   protected def edgeRemoved( e: ProcEdge )( implicit tx: ProcTxn ) {} // XXX should still fire
+//   protected def edgeAdded( e: ProcEdge )( implicit tx: ProcTxn ) {} // XXX should still fire
+//   protected def edgeRemoved( e: ProcEdge )( implicit tx: ProcTxn ) {} // XXX should still fire
 }
 
 class AudioInputImpl( val proc: ProcImpl, param: ProcParamAudioInput )
@@ -118,6 +118,9 @@ extends AbstractAudioInputImpl {
    def name = param.name
    
    override def toString = "aIn(" + proc.name + " @ " + name + ")"
+
+   protected def edgeAdded( e: ProcEdge )( implicit tx: ProcTxn ) {} // XXX should still fire
+   protected def edgeRemoved( e: ProcEdge )( implicit tx: ProcTxn ) {} // XXX should still fire
 
 //      protected val edges = Ref( Set.empty[ ProcEdge ])
 
@@ -389,10 +392,11 @@ extends AudioBusImpl with ProcAudioOutput {
 
    def ~>( control: ProcControl )( implicit tx: ProcTxn ) : Proc = {
       val m = control.map( this )
-      val e = m.edge // ProcEdge( out, m.input )
+//      val e = m.edge // ProcEdge( out, m.input )
+      val e = ProcEdge( out, m.in )
       require( !edges.contains( e ))
 //         edges.transform( _ + e )
-if( isPlaying ) println( "WARNING: ~> ctrl : not stopped / restarted yet!" )
+//if( isPlaying ) println( "WARNING: ~> ctrl : not stopped / restarted yet!" )
       addEdge( e )
       if( control.rate == Some( audio )) { // in this case we need to enforce topology
          ProcDemiurg.addEdge( e )

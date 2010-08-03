@@ -33,7 +33,7 @@ import de.sciss.synth._
 import ugen._
 
 /**
- *    @version 0.12, 09-Jul-10
+ *    @version 0.12, 03-Aug-10
  */
 class ControlImpl( val proc: ProcImpl, param: ProcParamFloat, val _rate: Rate )
 extends ProcControl {
@@ -149,84 +149,92 @@ xfade    xfade    xfade
          }
          case Some( m: ControlBusMapping ) => error( "Already mapped" )
       }
+      def fireControlChanged( m: ControlABusMapping ) {
+         val newCV = ControlValue( oldCV.current, Some( m ))
+         valueRef.set( newCV )
+         proc.controlChanged( ctrl, newCV )
+      }
       val m = _rate match {
-         case `control` => new ControlABusToKMapping( aout, ctrl )
-         case `audio` => new ControlABusToAMapping( aout, ctrl )
+         case `control` => new ControlABusToKMapping( aout, ctrl, fireControlChanged )
+         case `audio` => new ControlABusToAMapping( aout, ctrl, fireControlChanged )
          case _ => error( "Cannot map rate " + _rate )
       }
-      m.init
-      val newCV = ControlValue( oldCV.current, Some( m ))
-      valueRef.set( newCV )
-//      proc.controlMapped( ctrl, newCV )
-      proc.controlChanged( ctrl, newCV )
       m
    }
 
-   def isMapable = true
-   def canMap( aout: ProcAudioOutput )( implicit tx: ProcTxn ) : Boolean = !isMapped
+   def isMapable = _rate != scalar
+   def canMap( aout: ProcAudioOutput )( implicit tx: ProcTxn ) : Boolean = isMapable && !isMapped
 }
 
 trait ControlMappingImpl /* extends ControlMapping*/ {
-   protected val synth   = Ref[ Option[ RichSynth ]]( None )
+   private val synthRef = Ref[ Option[ RichSynth ]]( None )
 
    // ---- abstract ----
-   def target: ControlImpl
+   def ctrl: ControlImpl
    def play( implicit tx: ProcTxn ) : Unit
-   protected def addOutputConsumers( implicit tx: ProcTxn ) : Unit
-   protected def removeOutputConsumers( implicit tx: ProcTxn ) : Unit
+//   protected def addMapBusConsumers( implicit tx: ProcTxn ) : Unit
+//   protected def removeMapBusConsumers( implicit tx: ProcTxn ) : Unit
 //   protected def targetNode( implicit tx: ProcTxn ): RichNode
+   protected def addMapBusConsumer( rs: RichSynth )( implicit tx: ProcTxn ) : Unit
 
-   def proc    = target.proc
-   def name    = target.name + "#map"
+   def proc    = ctrl.proc
+   def name    = ctrl.name + "#map"
 
    def stop( implicit tx: ProcTxn ) {
-      // we set synth to None first, so
-      // the removeReader calls don't produce
-      // unnecessary n_set messages
-      synth.swap( None ).foreach( _.free( true ))
-      removeOutputConsumers
+println( "ControlMappingImpl.stop" )
+      synthRef.swap( None ).foreach( _.free( true ))
    }
 
-//   def isPlaying( implicit tx: ProcTxn ) : Boolean = synth().map( _.isOnline.get ).getOrElse( false )
+   protected def synth( implicit tx: ProcTxn ) : Option[ RichSynth ] = synthRef()
+   protected def synth_=( rso: Option[ RichSynth ])( implicit tx: ProcTxn ) {
+      val oldSynth = synthRef.swap( rso )
+//      addMapBusConsumers   // requires that synth has been assigned!
+      rso.foreach( addMapBusConsumer( _ ))
+      oldSynth.foreach( _.free( true ))
+   }
+
+   def isPlaying( implicit tx: ProcTxn ) : Boolean
 }
 
 trait ControlGlidingImpl
 extends ControlGliding with ControlMappingImpl {
 //   def cv: ControlValue
 
-   def isPlaying( implicit tx: ProcTxn ) : Boolean = synth().map( _.isOnline.get ).getOrElse( false )
-   
+//   def isPlaying( implicit tx: ProcTxn ) : Boolean = synth().map( _.isOnline.get ).getOrElse( false )
+   def isPlaying( implicit tx: ProcTxn ) : Boolean = synth.map( _.isOnline.get ).getOrElse( false )
+
    def play( implicit tx: ProcTxn ) {
       val g       = graph
-      val rsd     = RichSynthDef( target.proc.server, g )
+      val rsd     = RichSynthDef( proc.server, g )
 //      val dur     = cv.transit.asInstanceOf[ Glide ].dur // XXX not so pretty
-      val spec    = target.spec
+      val spec    = ctrl.spec
 //      val startN  = spec.unmap( /*spec.clip(*/ startValue /*)*/)
 //      val targetN = spec.unmap( targetValue )
-      val rs      = rsd.play( target.proc.preGroup,
+      val rs      = rsd.play( proc.preGroup,
          List( "$start" -> startNorm, "$stop" -> targetNorm, "$dur" -> glide.dur ))
 
-      val oldSynth = synth.swap( Some( rs ))
-      addOutputConsumers   // requires that synth has been assigned!
-      oldSynth.foreach( _.free( true ))
+      synth = Some( rs )
+//      val oldSynth = synth.swap( Some( rs ))
+//      addMapBusConsumers   // requires that synth has been assigned!
+//      oldSynth.foreach( _.free( true ))
 
-      rs.synth.onEnd { ProcTxn.atomic { tx0 =>
-         synth()( tx0 ).foreach( rs2 => if( rs == rs2 ) {
-            synth.set( None )( tx0 )
-            target.glidingDone( tx0 )  // invokes stop and hence removeOutputConsumers!
+      rs.onEnd { tx0 =>
+         synth( tx0 ).foreach( rs2 => if( rs == rs2 ) {
+//            synth.set( None )( tx0 )
+            ctrl.glidingDone( tx0 )  // invokes stop and hence removeMapBusConsumers!
          })
-      }}
+      }
    }
 
    protected def graph : SynthGraph
 }
 
-class ControlKGliding( val target: ControlImpl, val startNorm: Double, val targetNorm: Double, val glide: Glide )
+class ControlKGliding( val ctrl: ControlImpl, val startNorm: Double, val targetNorm: Double, val glide: Glide )
 extends ControlGlidingImpl with ControlToKMapping {
-   def output( implicit tx: ProcTxn ) = {
-      outputRef().getOrElse({
+   def mapBus( implicit tx: ProcTxn ) = {
+      mapBusRef().getOrElse({
          val res = RichBus.control( proc.server, 1 ) // XXX numChannels
-         outputRef.set( Some( res ))
+         mapBusRef.set( Some( res ))
          res
       })
    }
@@ -235,18 +243,18 @@ extends ControlGlidingImpl with ControlToKMapping {
 
    protected def graph = SynthGraph {
       val line    = Line.kr( "$start".ir, "$stop".ir, "$dur".ir, freeSelf )
-      val out     = target.spec.map( line )
+      val sig     = ctrl.spec.map( line )
       // XXX multichannel expansion
-      Out.kr( "$out".kr, out )
+      Out.kr( "$out".kr, sig )
    }
 }
 
-class ControlAGliding( val target: ControlImpl, val startNorm: Double, val targetNorm: Double, val glide: Glide )
+class ControlAGliding( val ctrl: ControlImpl, val startNorm: Double, val targetNorm: Double, val glide: Glide )
 extends ControlGlidingImpl with ControlToAMapping {
-   def output( implicit tx: ProcTxn ) = {
-      outputRef().getOrElse({
+   def mapBus( implicit tx: ProcTxn ) = {
+      mapBusRef().getOrElse({
          val res = RichBus.audio( proc.server, 1 ) // XXX numChannels
-         outputRef.set( Some( res ))
+         mapBusRef.set( Some( res ))
          res
       })
    }
@@ -255,26 +263,40 @@ extends ControlGlidingImpl with ControlToAMapping {
 
    protected def graph = SynthGraph {
       val line    = Line.ar( "$start".ir, "$stop".ir, "$dur".ir, freeSelf )
-      val out     = target.spec.map( line )
+      val sig     = ctrl.spec.map( line )
       // XXX multichannel expansion
-      Out.ar( "$out".kr, out )
+      Out.ar( "$out".kr, sig )
    }
 }
 
 abstract class ControlABusMappingImpl
 extends AbstractAudioInputImpl with ControlMappingImpl with ControlABusMapping {
-   def source: ProcAudioOutput
+   def out: ProcAudioOutput
+   def in: ProcAudioInput = this
+   def sourceVertex : Proc = out.proc
+//   def targetVertex: Proc = proc
+
+   // XXX override (because of AudioBusImpl)
+   override def isPlaying( implicit tx: ProcTxn ) : Boolean = synth.map( _.isOnline.get ).getOrElse( false )
+
+   def notification: ControlABusMapping => Unit
 //      def connect( implicit tx: ProcTxn ) { source ~> this } // XXX NO WE DON'T NEED TO ENFORCE TOPOLOGY !!!
 
-   lazy val edge = ProcEdge( source, this )
+//   lazy val edge = ProcEdge( source, this )
 
 //      protected val edges = Ref( Set.empty[ ProcEdge ])
 
 //      def input : ProcAudioInput = this
 
-   def init( implicit tx: ProcTxn ) {
-      addEdge( edge )
+//   def init( implicit tx: ProcTxn ) {
+//      addEdge( edge )
+//   }
+
+   protected def edgeAdded( e: ProcEdge )( implicit tx: ProcTxn ) {
+      notification.apply( this )
    }
+
+   protected def edgeRemoved( e: ProcEdge )( implicit tx: ProcTxn ) {} // XXX should still fire
 
    def sendToBack( xfade: XFade, backGroup: RichGroup )( implicit tx: ProcTxn ) {
 // XXX what now?
@@ -283,135 +305,154 @@ extends AbstractAudioInputImpl with ControlMappingImpl with ControlABusMapping {
 //      }
    }
 
-   /**
-    *    That means the mapping source bus changed.
-    *    If numChannels changes we need to rebuild.
-    *    Otherwise the mapping synth's "in" param
-    *    needs update.
-    */
-   def busChanged( bus: AudioBus )( implicit tx: ProcTxn ) {
-      // XXX check numChannels
-      synth().foreach( _.set( true, "in" -> bus.index ))
-   }
+//   /**
+//    *    That means the mapping source bus changed.
+//    *    If numChannels changes we need to rebuild.
+//    *    Otherwise the mapping synth's "in" param
+//    *    needs update.
+//    */
+//   def busChanged( bus: AudioBus )( implicit tx: ProcTxn ) {
+//      // XXX check numChannels
+//      synth().foreach( _.set( true, "in" -> bus.index ))
+//   }
 
    def play( implicit tx: ProcTxn ) {
+println( "ControlABusMappingImpl.play" )
       val inBus   = bus.get.busOption.get
       val g       = graph( inBus )
       val rsd     = RichSynthDef( inBus.server, g )
-      val rs      = rsd.play( source.proc.postGroup, List( "$in" -> inBus.index ), addToTail )
+      val rs      = rsd.play( sourceVertex.postGroup, List( "$in" -> inBus.index ), addToTail )
 
-      val oldSynth = synth.swap( Some( rs ))
-      addOutputConsumers   // requires that synth has been assigned!
-      oldSynth.foreach( _.free( true ))
+      synth = Some( rs )
+//      val oldSynth = synth.swap( Some( rs ))
+//      addMapBusConsumers   // requires that synth has been assigned!
+//      oldSynth.foreach( _.free( true ))
+      // XXX rs.onEnd ... -> mapping stopped
    }
 
    protected def graph( inBus: AudioBus ) : SynthGraph
 }
 
 trait ControlToKMapping extends ControlMappingImpl {
-   protected var outputRef = Ref[ Option[ RichControlBus ]]( None )
+   protected var mapBusRef = Ref[ Option[ RichControlBus ]]( None )
 
    // ---- abstract ----
-   def output( implicit tx: ProcTxn ) : RichControlBus
+   def mapBus( implicit tx: ProcTxn ) : RichControlBus
 
-   private val outputReader = new RichControlBus.User {
-      def busChanged( bus: ControlBus )( implicit tx: ProcTxn ) {
-         target.proc.anchorNode.mapn( true, target.name -> bus )
-      }
+//   private val mapBusReader = new RichControlBus.User {
+//      def busChanged( bus: ControlBus )( implicit tx: ProcTxn ) {
+//         target.proc.anchorNode.mapn( true, target.name -> bus )
+//      }
+//   }
+//
+//   private val mapBusWriter = new RichControlBus.User {
+//      def busChanged( bus: ControlBus )( implicit tx: ProcTxn ) {
+//         synth().foreach( _.set( true, "$out" -> bus.index ))
+//      }
+//   }
+
+   protected def addMapBusConsumer( rs: RichSynth )( implicit tx: ProcTxn ) {
+      val rb = mapBus
+      rs.write( rb -> "$out" )
+      // XXX que mierda. how do we remove the setter?
+      // this should go in proc.controlChanged
+      proc.anchorNode.map( rb -> ctrl.name )
    }
 
-   private val outputWriter = new RichControlBus.User {
-      def busChanged( bus: ControlBus )( implicit tx: ProcTxn ) {
-         synth().foreach( rs => {
-            rs.set( true, "$out" -> bus.index )
-         })
-      }
-   }
-
-   protected def addOutputConsumers( implicit tx: ProcTxn ) {
-      output.addReader( outputReader )
-      output.addWriter( outputWriter )
-   }
-
-   protected def removeOutputConsumers( implicit tx: ProcTxn ) {
-      output.removeReader( outputReader )
-      output.removeWriter( outputWriter )
-   }
+//   protected def addMapBusConsumers( implicit tx: ProcTxn ) {
+//      mapBus.addReader( mapBusReader )
+//      mapBus.addWriter( mapBusWriter )
+//   }
+//
+//   protected def removeMapBusConsumers( implicit tx: ProcTxn ) {
+//      mapBus.removeReader( mapBusReader )
+//      mapBus.removeWriter( mapBusWriter )
+//   }
 }
 
 trait ControlToAMapping extends ControlMappingImpl {
-   protected var outputRef = Ref[ Option[ RichAudioBus ]]( None )
+   protected var mapBusRef = Ref[ Option[ RichAudioBus ]]( None )
 
    // ---- abstract ----
-   def output( implicit tx: ProcTxn ) : RichAudioBus
+   def mapBus( implicit tx: ProcTxn ) : RichAudioBus
 
-   private val outputWriter = new RichAudioBus.User {
-      def busChanged( bus: AudioBus )( implicit tx: ProcTxn ) {
-         synth().foreach( rs => {
-            rs.set( true, "$out" -> bus.index )
-         })
-      }
+//   private val mapBusWriter = new RichAudioBus.User {
+//      def busChanged( bus: AudioBus )( implicit tx: ProcTxn ) {
+//         synth().foreach( _.set( true, "$out" -> bus.index ))
+//      }
+//   }
+//
+//   private val mapBusReader = new RichAudioBus.User {
+//      def busChanged( bus: AudioBus )( implicit tx: ProcTxn ) {
+//         target.proc.anchorNode.mapan( true, target.name -> bus )
+//      }
+//   }
+
+   protected def addMapBusConsumer( rs: RichSynth )( implicit tx: ProcTxn ) {
+      val rb = mapBus
+      rs.write( rb -> "$out" )
+      // XXX que mierda. how do we remove the setter?
+      // this should go in proc.controlChanged
+      proc.anchorNode.map( rb -> ctrl.name )
    }
 
-   private val outputReader = new RichAudioBus.User {
-      def busChanged( bus: AudioBus )( implicit tx: ProcTxn ) {
-         target.proc.anchorNode.mapan( true, target.name -> bus )
-      }
-   }
-
-   protected def addOutputConsumers( implicit tx: ProcTxn ) {
-      output.addReader( outputReader )
-      output.addWriter( outputWriter )
-   }
-
-   protected def removeOutputConsumers( implicit tx: ProcTxn ) {
-      output.removeReader( outputReader )
-      output.removeWriter( outputWriter )
-   }
+//   protected def addMapBusConsumers( implicit tx: ProcTxn ) {
+//      mapBus.addReader( mapBusReader )
+//      mapBus.addWriter( mapBusWriter )
+//   }
+//
+//   protected def removeMapBusConsumers( implicit tx: ProcTxn ) {
+//      mapBus.removeReader( mapBusReader )
+//      mapBus.removeWriter( mapBusWriter )
+//   }
 }
 
-class ControlABusToKMapping( val source: ProcAudioOutput, val target: ControlImpl )
+class ControlABusToKMapping( val out: ProcAudioOutput, val ctrl: ControlImpl,
+                             val notification: ControlABusMapping => Unit )
 extends ControlABusMappingImpl with ControlToKMapping {
    override def toString = "aIn(" + proc.name + " @ " + name + ")"
 
-   def output( implicit tx: ProcTxn ) = {
-      outputRef().getOrElse({
+   def mapBus( implicit tx: ProcTxn ) = {
+      mapBusRef() getOrElse {
          val inBus   = bus.get.busOption.get
-         val res     = RichBus.control( inBus.server, inBus.numChannels )
-         outputRef.set( Some( res ))
+         val res     = RichBus.control( inBus.server, 1 ) // XXX inBus.numChannels
+         mapBusRef.set( Some( res ))
          res
-      })
+      }
    }
 
 //   protected def targetNode( implicit tx: ProcTxn ) = target.proc.group // XXX anyway wrong!
 
    protected def graph( inBus: AudioBus ) = SynthGraph {
-      val in      = A2K.kr( In.ar( "$in".kr, inBus.numChannels ))
-      val clipped = Clip.kr( in, -1, 1 )
-      val out     = target.spec.map( clipped.madd( 0.5f, 0.5f ))
-      Out.kr( "$out".kr, out )
+//      val sig0    = A2K.kr( In.ar( "$in".kr, inBus.numChannels ))
+      val sig0    = A2K.kr( Mix( In.ar( "$in".kr, inBus.numChannels ))) // XXX eventually handle multi-channel
+      val clipped = Clip.kr( sig0, -1, 1 )
+      val sig     = ctrl.spec.map( clipped.madd( 0.5f, 0.5f ))
+      Out.kr( "$out".kr, sig )
    }
 }
 
-class ControlABusToAMapping( val source: ProcAudioOutput, val target: ControlImpl )
+class ControlABusToAMapping( val out: ProcAudioOutput, val ctrl: ControlImpl,
+                             val notification: ControlABusMapping => Unit )
 extends ControlABusMappingImpl with ControlToAMapping {
    override def toString = "aIn(" + proc.name + " @ " + name + ")"
 
-   def output( implicit tx: ProcTxn ) = {
-      outputRef().getOrElse({
+   def mapBus( implicit tx: ProcTxn ) = {
+      mapBusRef() getOrElse {
          val inBus   = bus.get.busOption.get
-         val res     = RichBus.audio( inBus.server, inBus.numChannels )
-         outputRef.set( Some( res ))
+         val res     = RichBus.audio( inBus.server, 1 ) // XXX inBus.numChannels
+         mapBusRef.set( Some( res ))
          res
-      })
+      }
    }
 
 //   protected def targetNode( implicit tx: ProcTxn ) = target.proc.group // XXX anyway wrong!
 
    protected def graph( inBus: AudioBus ) = SynthGraph {
-      val in      = In.ar( "$in".kr, inBus.numChannels )
-      val clipped = Clip.ar( in, -1, 1 )
-      val out     = target.spec.map( clipped.madd( 0.5f, 0.5f ))
-      Out.ar( "$out".kr, out )
+//      val sig0    = In.ar( "$in".kr, inBus.numChannels )
+      val sig0    = Mix( In.ar( "$in".kr, inBus.numChannels )) // XXX eventually handle multi-channel
+      val clipped = Clip.ar( sig0, -1, 1 )
+      val sig     = ctrl.spec.map( clipped.madd( 0.5f, 0.5f ))
+      Out.ar( "$out".kr, sig )
    }
 }

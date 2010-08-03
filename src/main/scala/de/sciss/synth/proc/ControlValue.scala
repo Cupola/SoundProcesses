@@ -25,13 +25,13 @@ case class ControlValue( target: Double, mapping: Option[ ControlMapping ]) {
 }
 
 sealed trait ControlMapping extends TxnPlayer {
-   def output( implicit tx: ProcTxn ) : RichBus
+   def mapBus( implicit tx: ProcTxn ) : RichBus[ _ ]
 }
 
 trait ControlGliding extends ControlMapping {
    def startNorm : Double
    def targetNorm : Double
-   def target : ProcControl
+   def ctrl: ProcControl
    def glide : Glide
 
    def currentNorm( implicit tx: ProcTxn ) : Double = {
@@ -46,11 +46,11 @@ trait ControlGliding extends ControlMapping {
 //      res
    }
 
-   def startValue    = target.spec.map( startNorm )
-   def targetValue   = target.spec.map( targetNorm )
+   def startValue    = ctrl.spec.map( startNorm )
+   def targetValue   = ctrl.spec.map( targetNorm )
 
-   def currentValue( implicit tx: ProcTxn ) : Double = target.spec.map( currentNorm )
-   def currentValueApprox : Double = target.spec.map( currentNormApprox )
+   def currentValue( implicit tx: ProcTxn ) : Double = ctrl.spec.map( currentNorm )
+   def currentValueApprox : Double = ctrl.spec.map( currentNormApprox )
 }
 
 sealed trait ControlBusMapping extends ControlMapping {
@@ -58,7 +58,9 @@ sealed trait ControlBusMapping extends ControlMapping {
 }
 
 trait ControlABusMapping extends ControlBusMapping {
-   def edge : ProcEdge// ( implicit tx: ProcTxn )
+//   def edge : ProcEdge// ( implicit tx: ProcTxn )
+   def in: ProcAudioInput
+   def out: ProcAudioOutput
 }
 
 //trait ControlKBusMapping extends ControlBusMapping {
