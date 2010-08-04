@@ -121,7 +121,9 @@ object ProcTxn {
          val old = transitVar
          try {
             transitVar = t
-            thunk
+            val res = thunk
+            t.finish( tx )
+            res
          } finally {
             transitVar = old
          }

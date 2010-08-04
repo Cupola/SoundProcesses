@@ -75,6 +75,7 @@ object SoundProcesses {
       import ProcTxn.{ atomic => t }
 
       Server.test { s =>
+         s.dumpOSC(1)
          ProcDemiurg.addServer( s )
          val (p1, p2) = t { implicit tx =>
             val p1 = (gen( "Mod" ) {
@@ -92,11 +93,19 @@ object SoundProcesses {
             (p1, p2)
          }
 
+         println( "\n-------------\n" )
+
          t { implicit tx =>
             xfade( 15 ) {
                p1 ~> p2.control( "freq" )
             }
          }
+
+//         t { implicit tx =>
+//            xfade( 15 ) {
+//               p1 ~/> p2.control( "freq" )
+//            }
+//         }
       }
    }
 

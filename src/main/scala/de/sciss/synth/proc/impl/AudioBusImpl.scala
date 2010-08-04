@@ -402,6 +402,9 @@ extends AudioBusImpl with ProcAudioOutput {
          ProcDemiurg.addEdge( e )
       }
       finishConnect( e )
+      if( control.proc.isPlaying ) {
+         m.play /// çe ça?
+      }
       control.proc
    }
 

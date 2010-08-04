@@ -166,47 +166,25 @@ object BusNodeSetter {
    private class AudioReaderImpl( val controlName: String, val bus: RichAudioBus, val node: RichNode )
    extends AbstractAudioReader with AudioSetterLike {
       def newInstance( newBus: RichAudioBus ) = reader( controlName, newBus, node )
+      override def toString = "BusNodeSetter.reader(" + controlName + ", " + bus + ", " + node + ")"
    }
 
    private class ControlReaderImpl( val controlName: String, val bus: RichControlBus, val node: RichNode )
    extends AbstractControlReader with ControlSetterLike {
       def newInstance( newBus: RichControlBus ) = reader( controlName, newBus, node )
+      override def toString = "BusNodeSetter.reader(" + controlName + ", " + bus + ", " + node + ")"
    }
 
    private class AudioMapperImpl( val controlName: String, val bus: RichAudioBus, val node: RichNode )
    extends AbstractAudioReader with AudioMapperLike {
       def newInstance( newBus: RichAudioBus ) = mapper( controlName, newBus, node )
+      override def toString = "BusNodeSetter.mapper(" + controlName + ", " + bus + ", " + node + ")"
    }
 
    private class ControlMapperImpl( val controlName: String, val bus: RichControlBus, val node: RichNode )
    extends AbstractControlReader with ControlMapperLike {
       def newInstance( newBus: RichControlBus ) = mapper( controlName, newBus, node )
-   }
-
-   private abstract class AbstractAudioWriter extends AbstractAudioImpl {
-      def add( implicit tx: ProcTxn ) {
-         val wasAdded = added.swap( true )
-         if( wasAdded ) error( "Was already added : " + this )
-         bus.addWriter( this )
-      }
-
-      def remove( implicit tx: ProcTxn ) {
-         val wasAdded = added.swap( false )
-         if( wasAdded ) bus.removeWriter( this )
-      }
-   }
-
-   private abstract class AbstractControlWriter extends AbstractControlImpl {
-      def add( implicit tx: ProcTxn ) {
-         val wasAdded = added.swap( true )
-         if( wasAdded ) error( "Was already added : " + this )
-         bus.addWriter( this )
-      }
-
-      def remove( implicit tx: ProcTxn ) {
-         val wasAdded = added.swap( false )
-         if( wasAdded ) bus.removeWriter( this )
-      }
+      override def toString = "BusNodeSetter.mapper(" + controlName + ", " + bus + ", " + node + ")"
    }
 
    /*
@@ -214,13 +192,37 @@ object BusNodeSetter {
     *    same combo might be wanted in a read / write set!
     */
    private class AudioWriterImpl( val controlName: String, val bus: RichAudioBus, val node: RichNode )
-   extends AbstractAudioWriter with AudioSetterLike {
+   extends AbstractAudioImpl with AudioSetterLike {
+      def add( implicit tx: ProcTxn ) {
+         val wasAdded = added.swap( true )
+         if( wasAdded ) error( "Was already added : " + this )
+         bus.addWriter( this )
+      }
+
+      def remove( implicit tx: ProcTxn ) {
+         val wasAdded = added.swap( false )
+         if( wasAdded ) bus.removeWriter( this )
+      }
+
       def newInstance( newBus: RichAudioBus ) = writer( controlName, newBus, node )
+      override def toString = "BusNodeSetter.writer(" + controlName + ", " + bus + ", " + node + ")"
    }
 
    private class ControlWriterImpl( val controlName: String, val bus: RichControlBus, val node: RichNode )
-   extends AbstractControlWriter with ControlSetterLike {
+   extends AbstractControlImpl with ControlSetterLike {
+      def add( implicit tx: ProcTxn ) {
+         val wasAdded = added.swap( true )
+         if( wasAdded ) error( "Was already added : " + this )
+         bus.addWriter( this )
+      }
+
+      def remove( implicit tx: ProcTxn ) {
+         val wasAdded = added.swap( false )
+         if( wasAdded ) bus.removeWriter( this )
+      }
+
       def newInstance( newBus: RichControlBus ) = writer( controlName, newBus, node )
+      override def toString = "BusNodeSetter.writer(" + controlName + ", " + bus + ", " + node + ")"
    }
 
    /*
@@ -249,6 +251,7 @@ object BusNodeSetter {
       }
 
       def newInstance( newBus: RichAudioBus ) = readerWriter( controlName, newBus, node )
+      override def toString = "BusNodeSetter.readerWriter(" + controlName + ", " + bus + ", " + node + ")"
    }
 
    private class ControlReaderWriterImpl( val controlName: String, val bus: RichControlBus, val node: RichNode )
@@ -273,5 +276,6 @@ object BusNodeSetter {
       }
 
       def newInstance( newBus: RichControlBus ) = readerWriter( controlName, newBus, node )
+      override def toString = "BusNodeSetter.readerWriter(" + controlName + ", " + bus + ", " + node + ")"
    }
 }

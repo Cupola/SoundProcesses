@@ -66,6 +66,7 @@ extends ProcRunning {
                   case rab: RichAudioBus => rab
                   case _ => error( "NOT YET IMPLEMENTED" )
                }
+               // migrateTo takes care of rejecting numChannels change
                accMapRef.set( acc + (name -> abp.copy( setter = abp.setter.migrateTo( newABus ))))
             }
          }
@@ -89,6 +90,7 @@ extends ProcRunning {
       val name = pbus.name
       acc.get( name ) foreach { abp =>
          val newABus = newBus.getOrElse( error( "Bus is used and hence must be defined : " + name ))
+         // migrateTo takes care of rejecting numChannels change
          accMapRef.set( acc + (name -> abp.copy( setter = abp.setter.migrateTo( newABus ))))
       }
    }

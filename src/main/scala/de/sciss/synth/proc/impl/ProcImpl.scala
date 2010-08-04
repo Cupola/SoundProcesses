@@ -335,10 +335,11 @@ println( "---> WAS THIS ONE" )
 
    def sendToBack( xfade: XFade )( implicit tx: ProcTxn ) {
       runningRef() foreach { r =>
-         if( !xfade.markSendToBack( this )) return
-         stop
-         createBackground( xfade, false )
-         play
+         if( !xfade.isMarked( this )) {
+            stop( true )
+//            createBackground( xfade, false )
+//         play
+         }
       }
    }
 
@@ -399,16 +400,19 @@ println( this.toString + " :: OLD STATE : " + oldState + " -> NEW STATE : " + ne
    }
 
    def stop( implicit tx: ProcTxn ) {
+      stop( false )
+   }
+
+   private def stop( replay: Boolean )( implicit tx: ProcTxn ) {
       runningRef() foreach { r =>
          r.stop
          tx transit match {
             case xfade: XFade => {
-               xfade.markSendToBack( this )
+               xfade.markSendToBack( this, replay )
                createBackground( xfade, false )   // ok to do this repeatedly (might be even necessary)
             }
             case _ =>
          }
-//         state = state.copy( playing = false )
          runningRef.set( None )
       }
       state = state.copy( playing = false )
@@ -425,7 +429,7 @@ println( this.toString + " :: OLD STATE : " + oldState + " -> NEW STATE : " + ne
                }
             }
             case xfade: XFade => {
-               xfade.markSendToBack( this )
+               xfade.markSendToBack( this, false )
                createBackground( xfade, true )
             }
             case glide: Glide => {

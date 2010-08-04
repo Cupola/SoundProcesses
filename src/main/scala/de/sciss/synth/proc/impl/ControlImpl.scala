@@ -141,14 +141,16 @@ xfade    xfade    xfade
    private[proc] def glidingDone( implicit tx: ProcTxn ) { v = cv.target } 
 
    def map( aout: ProcAudioOutput )( implicit tx: ProcTxn ) : ControlABusMapping = {
-      val oldCV = valueRef()
+      val oldCV   = valueRef()
       oldCV.mapping match {
          case None => // Ok
          case Some( cg: ControlGliding ) => {
-            v = cg.currentValue // stops the thing
+            v = cg.currentValue // stops the thing XXX carefull with transit
          }
          case Some( m: ControlBusMapping ) => error( "Already mapped" )
       }
+      // lazy completion a bit tricky... needed because the ProcAudioOuput
+      // completes the connection after map returns
       def fireControlChanged( m: ControlABusMapping ) {
          val newCV = ControlValue( oldCV.current, Some( m ))
          valueRef.set( newCV )
@@ -156,8 +158,13 @@ xfade    xfade    xfade
       }
       val m = _rate match {
          case `control` => new ControlABusToKMapping( aout, ctrl, fireControlChanged )
-         case `audio` => new ControlABusToAMapping( aout, ctrl, fireControlChanged )
+         case `audio`   => new ControlABusToAMapping( aout, ctrl, fireControlChanged )
          case _ => error( "Cannot map rate " + _rate )
+      }
+      tx.transit match {
+         case Instant =>
+         case fade: XFade => proc.sendToBack( fade )
+         case glide: Glide => error( "NOT YET SUPPORTED" )
       }
       m
    }
@@ -356,7 +363,7 @@ trait ControlToKMapping extends ControlMappingImpl {
       rs.write( rb -> "$out" )
       // XXX que mierda. how do we remove the setter?
       // this should go in proc.controlChanged
-      proc.anchorNode.map( rb -> ctrl.name )
+//      proc.anchorNode.map( rb -> ctrl.name )
    }
 
 //   protected def addMapBusConsumers( implicit tx: ProcTxn ) {
@@ -393,7 +400,7 @@ trait ControlToAMapping extends ControlMappingImpl {
       rs.write( rb -> "$out" )
       // XXX que mierda. how do we remove the setter?
       // this should go in proc.controlChanged
-      proc.anchorNode.map( rb -> ctrl.name )
+//      proc.anchorNode.map( rb -> ctrl.name )
    }
 
 //   protected def addMapBusConsumers( implicit tx: ProcTxn ) {

@@ -25,11 +25,13 @@ sealed abstract class Transition {
 
    def position( time: Double ) : Double
    def positionApprox : Double
+   def finish( implicit tx: ProcTxn ) : Unit
 }
 
 case object Instant extends Transition {
    def position( time: Double ) = 1.0
    def positionApprox = 1.0
+   def finish( implicit tx: ProcTxn ) {}
 }
 
 sealed abstract class DurationalTransition extends Transition {
@@ -50,17 +52,41 @@ sealed abstract class DurationalTransition extends Transition {
    }
 }
 
-case class XFade( start: Double, dur: Double ) extends DurationalTransition {
-   private var markSet = TxnLocal( Set.empty[ AnyRef ])
+object XFade {
+   var verbose = false
+}
 
-   def markSendToBack( obj: AnyRef )( implicit tx: ProcTxn ) : Boolean = {
-      val s       = markSet()
-      val isNew   = !s.contains( obj )
-      if( isNew ) {
-         markSet.set( s + obj )
-      }
+case class XFade( start: Double, dur: Double )
+extends DurationalTransition {
+   import XFade._
+   
+   private var markMap = Map.empty[ TxnPlayer, Boolean ]
+
+   def isMarked( p: TxnPlayer ) : Boolean = markMap.contains( p )
+
+   def markSendToBack( p: TxnPlayer, replay: Boolean ) /* ( implicit tx: ProcTxn ) */ : Boolean = {
+//      val s       = markSet()
+      val isNew   = !markMap.contains( p )
+         if( verbose ) println( "xfade markSendToBack(" + p + ", " + replay + ")" )
+//      if( isNew ) {
+         markMap += (p -> replay)
+//      }
       isNew
+   }
+
+   def finish( implicit tx: ProcTxn ) {
+      if( markMap.isEmpty ) return
+      
+      markMap foreach { tup =>
+         val (p, replay) = tup
+         if( verbose ) println( "xfade finish : " + tup )
+         if( replay ) p.play
+      }
+      markMap = Map.empty
    }
 }
 
-case class Glide( start: Double, dur: Double ) extends DurationalTransition
+case class Glide( start: Double, dur: Double )
+extends DurationalTransition {
+   def finish( implicit tx: ProcTxn ) {}
+}

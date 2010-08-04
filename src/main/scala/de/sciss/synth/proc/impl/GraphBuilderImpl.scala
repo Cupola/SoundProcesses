@@ -97,19 +97,10 @@ class GraphBuilderImpl( graph: GraphImpl, val tx: ProcTxn ) extends ProcGraphBui
 
          val accMap: Map[ String, AudioBusPlayerImpl ] = accessories.map( fun => {
             val abp = fun( rs )
+println( "acc : " + abp )
             abp.player.play // stop is in RunningGraphImpl
             abp.setter.controlName -> abp
          })( breakOut )
-
-//         val busMap = {
-//            val i: Map[ String, AudioBusNodeSetter ] = audioInputs.map( tup => tup._2 -> rs.read( tup ))( breakOut )
-//            i
-//         } ++ {
-//            val o: Map[ String, AudioBusNodeSetter ] = audioOutputs.map( tup => tup._2 -> rs.write( tup ))( breakOut )
-//            o
-//         } ++ {
-//            val m: Map[ String, AudioBusNodeSetter ] = audioMappings.map( tup => tup._2 -> rs.map( tup ))( breakOut )
-//         }
 
          bufsZipped foreach { tup =>
             val (b, rb) = tup
