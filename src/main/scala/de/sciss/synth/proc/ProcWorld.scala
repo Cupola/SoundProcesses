@@ -130,14 +130,15 @@ object ProcDemiurg extends TxnModel[ ProcDemiurgUpdate ] { // ( val server: Serv
    // commented out for debugging inspection
    var worlds = Map.empty[ Server, ProcWorld ] // new ProcWorld
 
-   val factories = Ref( Set.empty[ ProcFactory ])
+   private val factoriesRef = Ref( Set.empty[ ProcFactory ])
+   def factories( implicit tx: ProcTxn ) : Set[ ProcFactory ] = factoriesRef()  
 
-   protected def fullUpdate( implicit tx: ProcTxn ) = ProcDemiurgUpdate( factories(), Set.empty )
+   protected def fullUpdate( implicit tx: ProcTxn ) = ProcDemiurgUpdate( factoriesRef(), Set.empty )
    protected def emptyUpdate = ProcDemiurgUpdate( Set.empty, Set.empty )
 
    def addFactory( pf: ProcFactory )( implicit tx: ProcTxn ) {
       touch
-      factories.transform( _ + pf )
+      factoriesRef.transform( _ + pf )
       updateRef.transform( u => if( u.factoriesRemoved.contains( pf )) {
           u.copy( factoriesRemoved = u.factoriesRemoved - pf )
       } else {
@@ -147,7 +148,7 @@ object ProcDemiurg extends TxnModel[ ProcDemiurgUpdate ] { // ( val server: Serv
 
    def removeFactory( pf: ProcFactory )( implicit tx: ProcTxn ) {
       touch
-      factories.transform( _ - pf )
+      factoriesRef.transform( _ - pf )
       updateRef.transform( u => if( u.factoriesAdded.contains( pf )) {
           u.copy( factoriesAdded = u.factoriesAdded - pf )
       } else {
