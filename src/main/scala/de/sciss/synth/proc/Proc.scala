@@ -30,7 +30,7 @@ package de.sciss.synth.proc
 
 import collection.breakOut
 import collection.immutable.{ IndexedSeq => IIdxSeq, Map => IMap, Seq => ISeq, Set => ISet }
-import de.sciss.scalaosc.OSCMessage
+import de.sciss.osc.OSCMessage
 import de.sciss.synth._
 
 /**

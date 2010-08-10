@@ -30,7 +30,7 @@ package de.sciss.synth.proc
 
 import de.sciss.synth.osc.{ OSCSyncedMessage, OSCResponder }
 import de.sciss.synth._
-import de.sciss.scalaosc.OSCMessage
+import de.sciss.osc.OSCMessage
 import actors.{ Actor, DaemonActor, Future, TIMEOUT }
 import collection.immutable.{ IndexedSeq => IIdxSeq, Seq => ISeq, Set => ISet }
 

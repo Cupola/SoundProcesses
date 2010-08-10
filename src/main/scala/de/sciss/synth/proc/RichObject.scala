@@ -32,7 +32,7 @@ import de.sciss.synth._
 import collection.breakOut
 import collection.immutable.{ Queue => IQueue }
 import ProcTxn._
-import de.sciss.scalaosc.{OSCBundle, OSCMessage}
+import de.sciss.osc.{OSCBundle, OSCMessage}
 
 /**
  *    @version 0.11, 19-Jul-10

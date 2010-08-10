@@ -29,7 +29,7 @@
 package de.sciss.synth.proc
 
 import de.sciss.synth._
-import de.sciss.scalaosc.OSCBundle
+import de.sciss.osc.OSCBundle
 import collection.immutable.{ IndexedSeq => IIdxSeq }
 import io.AudioFileSpec
 import reflect.ClassManifest

@@ -29,7 +29,7 @@
 package de.sciss.synth.proc
 
 import de.sciss.synth._
-import de.sciss.scalaosc.{ OSCBundle, OSCMessage, OSCPacket }
+import de.sciss.osc.{ OSCBundle, OSCMessage, OSCPacket }
 import actors.{ DaemonActor, Future, Futures, TIMEOUT }
 import edu.stanford.ppl.ccstm.{ STM, Txn }
 import collection.immutable.{ IndexedSeq => IIdxSeq, IntMap, Queue => IQueue, Seq => ISeq, SortedMap => ISortedMap }

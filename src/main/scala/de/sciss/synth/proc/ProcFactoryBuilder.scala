@@ -30,7 +30,7 @@ package de.sciss.synth.proc
 
 import de.sciss.synth.{ audio => arate, control => krate, _ }
 import de.sciss.synth.io.AudioFile
-import de.sciss.scalaosc.{ OSCBundle, OSCMessage }
+import de.sciss.osc.{ OSCBundle, OSCMessage }
 import de.sciss.synth.osc.{ OSCSyncedMessage, OSCSynthNewMessage }
 import actors.{ DaemonActor, Future, TIMEOUT }
 import collection.breakOut
