@@ -28,19 +28,11 @@
 
 package de.sciss.synth.proc
 
-import de.sciss.synth.{ audio => arate, control => krate, _ }
-import de.sciss.synth.io.AudioFile
-import de.sciss.osc.{ OSCBundle, OSCMessage }
-import de.sciss.synth.osc.{ OSCSyncedMessage, OSCSynthNewMessage }
-import actors.{ DaemonActor, Future, TIMEOUT }
-import collection.breakOut
-import collection.immutable.{ IndexedSeq => IIdxSeq, Queue => IQueue, Seq => ISeq, Set => ISet }
+import de.sciss.synth.{ GE }
 import impl.FactoryBuilderImpl
-import ProcTransport._
-import ugen._
 
 /**
- *    @version 0.13, 02-Aug-10
+ *    @version 0.15, 11-Aug-10
  */
 trait ProcFactoryBuilder {
    def name : String
@@ -56,8 +48,8 @@ trait ProcFactoryBuilder {
    def graphIn( fun: GE => GE ) : ProcGraph
    def graphInOut( fun: GE => GE ) : ProcGraph
 
-//   def bufCue( name: String, path: => String ) : ProcBuffer
-//   def bufCue( name: String, p: ProcParamString ) : ProcBuffer
+   def idle( fun: () => Int ) : ProcIdle
+   def idle( fun: Int => Int ) : ProcIdle
 
    def finish : ProcFactory
 

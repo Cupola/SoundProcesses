@@ -28,9 +28,8 @@
 
 package de.sciss.synth.proc.impl
 
-import de.sciss.synth.AudioBus
-import collection.immutable.{ Seq => ISeq }
-import de.sciss.synth.proc._
+import de.sciss.synth.proc.{ ControlValue, Glide, Instant, ProcAudioBus, ProcControl, ProcRunning, ProcTxn, Ref,
+   RichAudioBus, RichGroup, RichNode, RichSynth, XFade }
 
 /**
  *    @version 0.11, 03-Aug-10

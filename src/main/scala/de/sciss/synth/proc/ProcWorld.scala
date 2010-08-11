@@ -28,11 +28,8 @@
 
 package de.sciss.synth.proc
 
-import de.sciss.synth.osc.{ OSCSyncedMessage, OSCResponder }
-import de.sciss.synth._
-import de.sciss.osc.OSCMessage
-import actors.{ Actor, DaemonActor, Future, TIMEOUT }
-import collection.immutable.{ IndexedSeq => IIdxSeq, Seq => ISeq, Set => ISet }
+import collection.immutable.{ IndexedSeq => IIdxSeq, Set => ISet }
+import de.sciss.synth.{ addAfter, addBefore, Group, Server, SynthDef, SynthGraph }
 
 /**
  *    @version 0.12, 06-Jul-10
@@ -53,20 +50,6 @@ class ProcWorld extends TxnModel[ ProcWorld.Update ] {
    private type Topo = Topology[ Proc, ProcEdge ] 
    val synthGraphs = Ref( Map.empty[ SynthGraph, RichSynthDef ])
    private val topologyRef = Ref[ Topo ]( Topology.empty )
-//   val topology    = Ref.withObserver( Topology.empty[ Proc, ProcEdge ]) { (oldTop, newTop) =>
-//      // getting nasty... we should track the changes eventually
-//      // inside a customized Ref object XXX
-//      val verticesRemoved  = oldTop.vertices.diff( newTop.vertices )
-//      val verticesAdded    = newTop.vertices.diff( oldTop.vertices )
-////      val oldEdges         = oldTop.edgeMap.values.flatten.toSeq // ayayay
-////      val newEdges         = newTop.edgeMap.values.flatten.toSeq
-////      val edgesRemoved     = oldEdges.diff( newEdges )
-////      val edgesAdded       = newEdges.diff( oldEdges )
-////      if( edgesRemoved.nonEmpty )      dispatch( EdgesRemoved( edgesRemoved: _* ))
-//      if( verticesRemoved.nonEmpty )   dispatch( ProcsRemoved( verticesRemoved: _* ))
-//      if( verticesAdded.nonEmpty )     dispatch( ProcsAdded( verticesAdded: _* ))
-////      if( edgesAdded.nonEmpty )        dispatch( EdgesAdded( edgesAdded: _* ))
-//   }
 
    protected def fullUpdate( implicit tx: ProcTxn ) = Update( topologyRef().vertices.toSet, Set.empty )
    protected def emptyUpdate = Update( Set.empty, Set.empty )

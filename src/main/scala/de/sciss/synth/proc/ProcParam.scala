@@ -28,8 +28,7 @@
 
 package de.sciss.synth.proc
 
-import de.sciss.synth._
-import ugen.{Out, In}
+import de.sciss.synth.GE
 
 /**
  *    @version 0.12, 01-Jul-10

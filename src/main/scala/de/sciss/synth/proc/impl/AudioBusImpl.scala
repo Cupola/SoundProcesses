@@ -28,9 +28,13 @@
 
 package de.sciss.synth.proc.impl
 
-import de.sciss.synth.proc._
-import de.sciss.synth.{ ControlSetMap => CSet, _ }
-import ugen._
+import de.sciss.synth.proc.{ DurationalTransition, Glide, Instant, Proc, ProcAudioInput, ProcAudioInsertion,
+   ProcAudioOutput, ProcControl, ProcDemiurg, ProcEdge, ProcParamAudioInput, ProcParamAudioOutput, ProcTxn,
+   Ref, RichAudioBus, RichBus, RichSynthDef, XFade }
+import de.sciss.synth.{ audio, doNothing, freeSelf, welchShape, sinShape, varShape, addToHead, addToTail, DoneAction,
+   EnvSeg, Env, GE, ControlSetMap => CSet, SynthGraph, ConstEnvShape }
+import de.sciss.synth.ugen.{ EnvGen, In, Line, Out, ReplaceOut }
+import de.sciss.synth
 
 /**
  *    @version 0.11, 06-Jul-10
@@ -187,6 +191,7 @@ extends AudioBusImpl with ProcAudioOutput {
    // create xfade graph including ReplaceOut.
    // returns the old bus signal and the new one
    private def xfadeGraphMain( numChannels: Int ) : (GE, GE) = {
+      import synth._
       val line    = EnvGen.kr( Env( "$start".ir, List( EnvSeg( 1, "$stop".ir, varShape( "$shape".ir )))),
          timeScale = "$dur".ir, doneAction = "$done".ir )
       val wIn     = (1 - line).sqrt
@@ -201,12 +206,14 @@ extends AudioBusImpl with ProcAudioOutput {
    private def xfadeGraph( numChannels: Int ) = SynthGraph( xfadeGraphMain( numChannels ))
 
    private def xfadeSendGraph( numChannels: Int ) = SynthGraph {
+      import synth._
       val (sigOld, sigMix) = xfadeGraphMain( numChannels )
       val sigPure = sigMix - sigOld
       Out.ar( "$out".kr, sigPure )
    }
 
    private def routeGraph( numChannels: Int ) = SynthGraph {
+      import synth._
       Line.kr( 0, 0, "$dur".ir, "$done".ir )
       Out.ar( "$out".kr, In.ar( "$in".kr , numChannels))
    }

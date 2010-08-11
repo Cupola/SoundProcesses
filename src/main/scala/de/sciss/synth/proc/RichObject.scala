@@ -28,11 +28,11 @@
 
 package de.sciss.synth.proc
 
-import de.sciss.synth._
 import collection.breakOut
 import collection.immutable.{ Queue => IQueue }
 import ProcTxn._
-import de.sciss.osc.{OSCBundle, OSCMessage}
+import de.sciss.synth.{ addToHead, AddAction, Buffer, ControlABusMap, ControlKBusMap, ControlSetMap,
+   Group, Node, Server, Synth, SynthDef, SynthGraph }
 
 /**
  *    @version 0.11, 19-Jul-10

@@ -28,9 +28,12 @@
 
 package de.sciss.synth.proc.impl
 
-import de.sciss.synth.proc._
-import de.sciss.synth._
-import ugen._
+import de.sciss.synth.{ control, audio, scalar, freeSelf, addToTail, AudioBus, Rate, SynthGraph }
+import de.sciss.synth.proc.{ ControlABusMapping, ControlBusMapping, ControlGliding, ControlValue, Glide, Instant,
+   Proc, ProcAudioInput, ProcAudioOutput, ProcControl, ProcEdge, ProcParamFloat, ProcTxn, Ref,
+   RichAudioBus, RichBus, RichControlBus, RichGroup, RichSynth, RichSynthDef, XFade }
+import de.sciss.synth.ugen.{ A2K, Clip, In, Line, Mix, Out }
+import de.sciss.{ synth => syn }
 
 /**
  *    @version 0.12, 03-Aug-10
@@ -249,6 +252,7 @@ extends ControlGlidingImpl with ControlToKMapping {
 //   protected def targetNode( implicit tx: ProcTxn ) = target.proc.group // XXX anyway wrong!
 
    protected def graph = SynthGraph {
+      import syn._
       val line    = Line.kr( "$start".ir, "$stop".ir, "$dur".ir, freeSelf )
       val sig     = ctrl.spec.map( line )
       // XXX multichannel expansion
@@ -269,6 +273,7 @@ extends ControlGlidingImpl with ControlToAMapping {
 //   protected def targetNode( implicit tx: ProcTxn ) = target.proc.group // XXX anyway wrong!
 
    protected def graph = SynthGraph {
+      import syn._
       val line    = Line.ar( "$start".ir, "$stop".ir, "$dur".ir, freeSelf )
       val sig     = ctrl.spec.map( line )
       // XXX multichannel expansion
@@ -431,6 +436,7 @@ extends ControlABusMappingImpl with ControlToKMapping {
 //   protected def targetNode( implicit tx: ProcTxn ) = target.proc.group // XXX anyway wrong!
 
    protected def graph( inBus: AudioBus ) = SynthGraph {
+      import syn._
 //      val sig0    = A2K.kr( In.ar( "$in".kr, inBus.numChannels ))
       val sig0    = A2K.kr( Mix( In.ar( "$in".kr, inBus.numChannels ))) // XXX eventually handle multi-channel
       val clipped = Clip.kr( sig0, -1, 1 )
@@ -456,6 +462,7 @@ extends ControlABusMappingImpl with ControlToAMapping {
 //   protected def targetNode( implicit tx: ProcTxn ) = target.proc.group // XXX anyway wrong!
 
    protected def graph( inBus: AudioBus ) = SynthGraph {
+      import syn._
 //      val sig0    = In.ar( "$in".kr, inBus.numChannels )
       val sig0    = Mix( In.ar( "$in".kr, inBus.numChannels )) // XXX eventually handle multi-channel
       val clipped = Clip.ar( sig0, -1, 1 )

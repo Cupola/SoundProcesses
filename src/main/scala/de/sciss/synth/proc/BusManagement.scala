@@ -29,7 +29,7 @@
 package de.sciss.synth.proc
 
 import collection.immutable.{ SortedMap => ISortedMap, SortedSet => ISortedSet }
-import de.sciss.synth._
+import de.sciss.synth.{ AudioBus, AudioRated, Bus, ControlBus, ControlRated, Rate, Server }
 
 /**
  *    @version 0.12, 18-Jul-10

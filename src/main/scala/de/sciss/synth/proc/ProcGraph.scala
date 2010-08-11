@@ -28,8 +28,6 @@
 
 package de.sciss.synth.proc
 
-import de.sciss.synth.AddAction
-
 /**
  *    @version 0.12, 19-Jul-10
  */

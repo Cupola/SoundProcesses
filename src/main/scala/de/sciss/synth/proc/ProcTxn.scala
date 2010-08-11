@@ -28,15 +28,13 @@
 
 package de.sciss.synth.proc
 
-import de.sciss.synth._
-import de.sciss.osc.{ OSCBundle, OSCMessage, OSCPacket }
-import actors.{ DaemonActor, Future, Futures, TIMEOUT }
+import de.sciss.osc.{ OSCBundle, OSCMessage }
+import actors.{ Futures }
 import edu.stanford.ppl.ccstm.{ STM, Txn }
-import collection.immutable.{ IndexedSeq => IIdxSeq, IntMap, Queue => IQueue, Seq => ISeq, SortedMap => ISortedMap }
-import collection.mutable.{ HashMap, Queue => MQueue, Set => MSet }
-import collection.{ breakOut, SortedMap }
-import osc._
-
+import collection.immutable.{ IndexedSeq => IIdxSeq, IntMap, Queue => IQueue }
+import collection.{ breakOut }
+import de.sciss.synth.osc.{OSCSyncedMessage, OSCSend}
+import de.sciss.synth.Server
 /**
  *    @version 0.12, 04-Jul-10
  */

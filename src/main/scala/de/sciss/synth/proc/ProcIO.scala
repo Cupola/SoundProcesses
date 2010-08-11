@@ -28,7 +28,7 @@
 
 package de.sciss.synth.proc
 
-import de.sciss.synth.{ Bus, Rate }
+import de.sciss.synth.{ Rate }
 import collection.immutable.{ Set => ISet }
 
 /**

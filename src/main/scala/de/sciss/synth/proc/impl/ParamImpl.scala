@@ -28,9 +28,12 @@
 
 package de.sciss.synth.proc.impl
 
-import de.sciss.synth._
-import de.sciss.synth.proc._
 import de.sciss.synth.ugen.{ In, Out }
+import de.sciss.synth.{ audio, control, GE }
+import de.sciss.synth.proc.{ ParamSpec, Proc, ProcGraphBuilder, ProcParamAudio, ProcParamAudioInput,
+   ProcParamAudioOutput, ProcParamControl, ProcParamScalar,
+   ProcParamUnspecifiedException, RichAudioBus, RichBus }
+import de.sciss.synth
 
 /**
  *    @version 0.13, 02-Aug-10
@@ -38,6 +41,7 @@ import de.sciss.synth.ugen.{ In, Out }
 class ParamScalarImpl( val name: String, val spec: ParamSpec, val default: Double )
 extends ProcParamScalar {
    def ir : GE = {
+      import synth._
       val p             = Proc.local
       val pb            = ProcGraphBuilder.local
       implicit val tx   = pb.tx
@@ -58,6 +62,7 @@ extends ProcParamScalar {
 class ParamControlImpl( val name: String, val spec: ParamSpec, val default: Double )
 extends ProcParamControl {
    def kr : GE = {
+      import synth._
       val p             = Proc.local
       val pb            = ProcGraphBuilder.local
       implicit val tx   = pb.tx
@@ -78,6 +83,7 @@ extends ProcParamControl {
 class ParamAudioImpl( val name: String, val spec: ParamSpec, val default: Double )
 extends ProcParamAudio {
    def ar : GE = {
+      import synth._
       val p             = Proc.local
       val pb            = ProcGraphBuilder.local
       implicit val tx   = pb.tx
@@ -102,6 +108,7 @@ class ParamAudioInputImpl( val name: String, val default: Option[ RichAudioBus ]
 extends ProcParamAudioInput {
 
    def ar : GE = {
+      import synth._
       val p    = Proc.local
       val pb   = ProcGraphBuilder.local
       implicit val tx   = pb.tx
@@ -139,6 +146,7 @@ class ParamAudioOutputImpl( val name: String, val default: Option[ RichAudioBus 
 extends ProcParamAudioOutput {
 
    def ar( sig: GE ) : GE = {
+      import synth._
       val numChannels   = sig.numOutputs
       val p             = Proc.local
       val pb            = ProcGraphBuilder.local

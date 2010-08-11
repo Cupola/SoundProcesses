@@ -1,9 +1,11 @@
 package de.sciss.synth.proc.impl
 
-import de.sciss.synth.proc._
-import de.sciss.synth._
 import collection.breakOut
 import collection.immutable.{ Queue => IQueue }
+import de.sciss.synth.proc.{ Proc, ProcBuffer, ProcGraphBuilder, ProcParam, ProcParamAudioInput,
+   ProcParamAudioOutput, ProcParamFloat, ProcRunning, ProcTxn,
+   RichAudioBus, RichControlBus, RichSynth, RichSynthDef }
+import de.sciss.synth.{ ControlSetMap, SingleControlSetMap, SynthGraph }
 
 /**
  *    @version 0.12, 03-Aug-10
@@ -97,7 +99,7 @@ class GraphBuilderImpl( graph: GraphImpl, val tx: ProcTxn ) extends ProcGraphBui
 
          val accMap: Map[ String, AudioBusPlayerImpl ] = accessories.map( fun => {
             val abp = fun( rs )
-println( "acc : " + abp )
+//println( "acc : " + abp )
             abp.player.play // stop is in RunningGraphImpl
             abp.setter.controlName -> abp
          })( breakOut )

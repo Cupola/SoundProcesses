@@ -28,9 +28,9 @@
 
 package de.sciss.synth.proc
 
-import collection.mutable.{ HashSet => MHashSet, ListBuffer, PriorityQueue, Queue => MQueue }
+import collection.mutable.{ PriorityQueue }
 import math._
-import actors.{DaemonActor, Actor, TIMEOUT}
+import actors.{ DaemonActor, TIMEOUT }
 
 /**
  *    @version 0.11, 03-Jun-10

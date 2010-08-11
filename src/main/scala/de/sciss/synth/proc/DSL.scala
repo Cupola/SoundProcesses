@@ -37,7 +37,7 @@ import ugen.{SendTrig, VDiskIn}
 import java.io.{IOException, File}
 
 /**
- *    @version 0.12, 02-Aug-10
+ *    @version 0.15, 11-Aug-10
  */
 object DSL {
    private val cmGE     = ClassManifest.fromClass( classOf[ GE ])
@@ -51,9 +51,9 @@ object DSL {
    // ---- scope : outside ----
 
    /**
-    *    Generates a sound generating process factory
-    *    with the given name and described through
-    *    the given code block.
+    * Generates a sound generating process factory
+    * with the given name and described through
+    * the given code block.
     */
    def gen( name: String )( thunk: => Unit )( implicit tx: ProcTxn ) : ProcFactory = {
       val res = ProcFactoryBuilder.gen( name )( thunk )
@@ -62,9 +62,9 @@ object DSL {
    }
 
    /**
-    *    Generates a sound filtering (transformation) process factory
-    *    with the given name and described through
-    *    the given code block.
+    * Generates a sound filtering (transformation) process factory
+    * with the given name and described through
+    * the given code block.
     */
    def filter( name: String )( thunk: => Unit )( implicit tx: ProcTxn ) : ProcFactory = {
       val res = ProcFactoryBuilder.filter( name )( thunk )
@@ -73,9 +73,9 @@ object DSL {
    }
 
    /**
-    *    Generates a sound diffusing process factory
-    *    with the given name and described through
-    *    the given code block.
+    * Generates a sound diffusing process factory
+    * with the given name and described through
+    * the given code block.
     */
    def diff( name: String )( thunk: => Unit )( implicit tx: ProcTxn ) : ProcFactory = {
       val res = ProcFactoryBuilder.diff( name )( thunk )
@@ -84,17 +84,17 @@ object DSL {
    }
 
    /**
-    *    Performs a code block where all
-    *    transitions are considered instantly.
+    * Performs a code block where all
+    * transitions are considered instantly.
     */
    def instant[ T ]( thunk: => T )( implicit tx: ProcTxn ) = {
       tx.withTransition( Instant )( thunk )
    }
 
    /**
-    *    Performs a code block with transitional
-    *    semantics taken from a crossfade of
-    *    the given duration (in seconds).
+    * Performs a code block with transitional
+    * semantics taken from a crossfade of
+    * the given duration (in seconds).
     */
    def xfade[ T ]( dur: Double )( thunk: => T )( implicit tx: ProcTxn ) = {
       val trns = XFade( tx.time, dur )
@@ -102,9 +102,9 @@ object DSL {
    }
 
    /**
-    *    Performs a code block with transitional
-    *    semantics taken from gliding for
-    *    the given duration (in seconds).
+    * Performs a code block with transitional
+    * semantics taken from gliding for
+    * the given duration (in seconds).
     */
    def glide[ T ]( dur: Double )( thunk: => T )( implicit tx: ProcTxn ) = {
       val trns = Glide( tx.time, dur ) 
@@ -113,19 +113,43 @@ object DSL {
 
    // ---- scope : gen (ProcFactoryBuilder) ----
 
+   /**
+    * The scope is inside a `gen { }`, `filter { }` or `diff { }` block.
+    */
    def pScalar( name: String, spec: ParamSpec = ParamSpec(), default: Double ) : ProcParamScalar =
       ProcFactoryBuilder.local.pScalar( name, spec, default )
+   /**
+    * The scope is inside a `gen { }`, `filter { }` or `diff { }` block.
+    */
    def pControl( name: String, spec: ParamSpec = ParamSpec(), default: Double ) : ProcParamControl =
       ProcFactoryBuilder.local.pControl( name, spec, default )
+   /**
+    * The scope is inside a `gen { }`, `filter { }` or `diff { }` block.
+    */
    def pAudio( name: String, spec: ParamSpec = ParamSpec(), default: Double ) : ProcParamAudio =
       ProcFactoryBuilder.local.pAudio( name, spec, default )
 //   def pString( name: String, default: Option[ String ] = None ) : ProcParamString =
 //      ProcFactoryBuilder.local.pString( name, default )
+   /**
+    * The scope is inside a `gen { }`, `filter { }` or `diff { }` block.
+    */
    def pAudioIn( name: String, default: Option[ RichAudioBus ] = None ) : ProcParamAudioInput =
       ProcFactoryBuilder.local.pAudioIn( name, default )
+   /**
+    * The scope is inside a `gen { }`, `filter { }` or `diff { }` block.
+    */
    def pAudioOut( name: String, default: Option[ RichAudioBus ] = None ) : ProcParamAudioOutput =
       ProcFactoryBuilder.local.pAudioOut( name, default )
 
+   /**
+    * Creates the main entry point of the proc by providing a
+    * synthdef builder. Typically this is called for ProcGen
+    * anatomy, as the thunk does not take an input argument,
+    * but it might nevertheless be used also in a ProcFilter
+    * context.
+    *
+    * The scope is inside a `gen { }`, `filter { }` or `diff { }` block.
+    */
    def graph( thunk: => GE ) : ProcGraph = {
       val b = ProcFactoryBuilder.local
       b.anatomy match {
@@ -135,6 +159,15 @@ object DSL {
       }
    }
 
+   /**
+    * Creates the main entry point of the proc by providing a
+    * synthdef builder. The proc can have either a ProcFilter
+    * or a ProcDiff anatomy. Since a ProcGen does not provide
+    * a default input, calling this method for a ProcGen proc
+    * will throw a runtime error.
+    *
+    * The scope is inside a `filter { }` or `diff { }` block.
+    */
    def graph( fun: GE => GE ) : ProcGraph = {
       val b = ProcFactoryBuilder.local
       b.anatomy match {
@@ -144,62 +177,42 @@ object DSL {
       }
    }
 
-//   def synth[ T ]( thunk: => T )( implicit m: ClassManifest[ T ]) : ProcGraph = {
-//      val pf = ProcFactoryBuilder.local
-//      if( m <:< cmGE ) {
-//         val funC: Function0[ GE ] = () => thunk.asInstanceOf[ GE ]
-//         pf.synthOutput( funC )
-//      } else if( m <:< cmUnit ) {
-//         val funC: Function0[ Unit ] = () => thunk
-//         pf.synth( funC )
-//      } else error( "Unsupported graph return type" )
-//   }
-//
-//   def filter[ T ]( fun: GE => T )( implicit m: ClassManifest[ T ]) : ProcGraph = {
-//      val pf = ProcFactoryBuilder.local
-//      if( m <:< cmGE ) {
-//         val funC: Function1[ GE, GE ] = fun.asInstanceOf[ GE => GE ]
-//         pf.filterOutput( funC )
-//      } else if( m <:< cmUnit ) {
-//         val funC: Function1[ GE, Unit ] = fun.asInstanceOf[ GE => Unit ]
-//         pf.filter( funC )
-//      } else error( "Unsupported graph return type" )
-//   }
+   def idle( thunk: => Int ) : ProcIdle = {
+      val b = ProcFactoryBuilder.local
+      b.idle( () => thunk )
+   }
 
-   // XXX they should also go into the graphs...? or both possible?
-//   def bufCue( name: String, path: => String ) : ProcBuffer =
-//      ProcFactoryBuilder.local.bufCue( name, path )
-//   def bufCue( name: String, p: ProcParamString ) : ProcBuffer =
-//      ProcFactoryBuilder.local.bufCue( name, p )
+   def idle( fun: Int => Int ) : ProcIdle = {
+      val b = ProcFactoryBuilder.local
+      b.anatomy match {
+         case ProcGen    => error( "Generators do not have a default input" )
+         case _          => b.idle( fun )
+      }
+   }
 
    // ---- scope : graph (ProcGraphBuilder) ----
-   
-//   implicit def paramNumToGE( p: ProcParamNum ) : GE = p.embed
-//   implicit def bufferToGE( b: ProcBuffer ) : GE = b.embed
 
+   /**
+    * The scope is inside a `graph { }` block.
+    */
    def bufCue( path: String, startFrame: Long = 0L ) : ProcBuffer =
       ProcGraphBuilder.local.bufCue( path, startFrame )
-//   def bufCue( name: String, p: ProcParamString ) : ProcBuffer =
-//      ProcFactoryBuilder.local.bufCue( name, p )
+   /**
+    * The scope is inside a `graph { }` block.
+    */
    def bufEmpty( numFrames: Int, numChannels: Int = 1 ) : ProcBuffer =
       ProcGraphBuilder.local.bufEmpty( numFrames, numChannels )
 
+   /**
+    * Returns the sample-rate of the server on which the enclosing
+    * proc is running. The scope is inside a `graph { }` block.
+    */
    def sampleRate : Double = Proc.local.server.sampleRate
 
    implicit def procToAudioInput( p: Proc ) : ProcAudioInput   = p.audioInput( "in" )
    implicit def procToAudioOutput( p: Proc ) : ProcAudioOutput = p.audioOutput( "out" )
    implicit def procToAudioInOut( p: Proc ) : (ProcAudioInput, ProcAudioOutput) =
       p.audioInput( "in" ) -> p.audioOutput( "out" )
-
-//   implicit def geToReply( ge: GE ) : ServerReplyValue = {
-//      val res = ge match {
-//         case VDiskIn( _, _, _, _, Constant( constID )) =>
-//         case SendTrig( _, _, Constant( constID ), _ )  =>
-//         // case SendReply( ... ) -- how to handle multiple channels?
-//         case _ => error( "Cannot construct constant reply pattern for " + ge )
-//      }
-//      res
-//   }
 }
 
 trait ProcBuffer {

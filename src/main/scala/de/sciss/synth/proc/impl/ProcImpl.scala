@@ -28,11 +28,16 @@
 
 package de.sciss.synth.proc.impl
 
-import de.sciss.synth.proc._
 import collection.breakOut
 import collection.immutable.{ IndexedSeq => IIdxSeq, Set => ISet }
-import de.sciss.synth.{ audio => arate, control => krate, scalar => irate, _ }
-import ugen.Line
+import de.sciss.synth
+import de.sciss.synth.{ addToHead, addAfter, addBefore, addToTail, freeGroup,
+   audio => arate, control => krate, scalar => irate, AddAction, Group, Server, SynthGraph }
+import de.sciss.synth.ugen.Line
+import de.sciss.synth.proc.{ ControlValue, Glide, Instant, Proc, ProcAudioBus, ProcAudioInput,
+   ProcAudioOutput, ProcControl, ProcDemiurg, ProcEdge, ProcParam,
+   ProcParamAudio, ProcParamControl, ProcParamScalar, ProcParamUnspecifiedException, ProcRunning, ProcTxn, Ref,
+   RichAudioBus, RichGroup, RichNode, RichSynthDef, XFade }
 
 /**
  *    @version 0.14, 02-Aug-10
@@ -313,6 +318,7 @@ extends Proc {
       // XXX graphs like this could be lazy vals
       // in the companion object
       val rsd     = RichSynthDef( server, SynthGraph {
+         import synth._
          Line.kr( dur = "$dur".ir, doneAction = freeGroup )
       })
       val rs      = rsd.play( if( dispose ) main else back, List( "$dur" -> xfade.dur ))
@@ -320,9 +326,9 @@ extends Proc {
       // monitor fading
       backRef.set( Some( back ))
       back.onEnd { tx0 =>
-println( "BACK REF END : LOOKING FOR " + back + " ; FOUND " + backRef()( tx0 ))
+//println( "BACK REF END : LOOKING FOR " + back + " ; FOUND " + backRef()( tx0 ))
          if( backRef()( tx0 ) == Some( back )) {
-println( "---> WAS THIS ONE" )
+//println( "---> WAS THIS ONE" )
             state_=( state( tx0 ).copy( fading = false ))( tx0 )
             backRef.set( None )( tx0 )
          }
@@ -394,7 +400,7 @@ println( "---> WAS THIS ONE" )
       if( oldState != newState ) {
          touch
          val u = updateRef()
-println( this.toString + " :: OLD STATE : " + oldState + " -> NEW STATE : " + newState )
+//println( this.toString + " :: OLD STATE : " + oldState + " -> NEW STATE : " + newState )
          updateRef.set( u.copy( state = newState ))
       }
    }

@@ -28,8 +28,10 @@
 
 package de.sciss.synth.proc.impl
 
-import de.sciss.synth.proc._
-import de.sciss.synth.{Rate, audio, control, GE}
+import de.sciss.synth.{ audio, control, GE, Rate }
+import de.sciss.synth.proc.{ ParamSpec, Proc, ProcAnatomy, ProcDiff, ProcFactory, ProcFactoryBuilder,
+   ProcEntry, ProcFilter, ProcGen, ProcGraph, ProcIdle, ProcParam, ProcParamAudio, ProcParamAudioInput,
+   ProcParamAudioOutput, ProcParamControl, ProcParamScalar, RichAudioBus }
 
 /**
  *    @version 0.12, 20-Jul-10
@@ -52,7 +54,7 @@ extends ProcFactoryBuilder {
    private var paramMap                   = Map.empty[ String, ProcParam ]
    private var paramSeq                   = Vector.empty[ ProcParam ]
 //   private var buffers                    = Map[ String, ProcBuffer ]()
-   private var graph: Option[ ProcGraph ] = None
+//   private var graph: Option[ ProcGraph ] = None
    private var entry: Option[ ProcEntry ] = None
    private var pAudioIns                  = Vector.empty[ ProcParamAudioInput ]
    private var pAudioOuts                 = Vector.empty[ ProcParamAudioOutput ]
@@ -141,26 +143,22 @@ extends ProcFactoryBuilder {
 
    def graph( fun: () => GE ) : ProcGraph = {
       requireOngoing
-      require( graph.isEmpty, "Graph already defined" )
+//      require( graph.isEmpty, "Graph already defined" )
       val res = new GraphImpl( fun )
-      graph = Some( res )
+//      graph = Some( res )
       enter( res )
       res
    }
 
-//   def bufCue( name: String, path: => String ) : ProcBuffer = {
-//      val b = new BufferImpl( name, implicit t => path )
-//      addBuffer( b )
-//      b
-//   }
-//
-//   def bufCue( name: String, p: ProcParamString ) : ProcBuffer = {
-//      val b = new BufferImpl( name, implicit t => Proc.local.getString( p.name ))
-//      addBuffer( b )
-//      b
-//   }
+   def idle( fun: Int => Int ) : ProcIdle = {
+      error( "NOT YET IMPLEMENTED" )
+   }
 
-    private def enter( e: ProcEntry ) {
+   def idle( fun: () => Int ) : ProcIdle = {
+      error( "NOT YET IMPLEMENTED" )
+   }
+
+   private def enter( e: ProcEntry ) {
       require( entry.isEmpty, "Entry already defined" )
       entry = Some( e )
    }

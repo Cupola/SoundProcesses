@@ -29,9 +29,8 @@
 package de.sciss.synth.proc
 
 import collection.breakOut
-import collection.immutable.{ IndexedSeq => IIdxSeq, Map => IMap, Seq => ISeq, Set => ISet }
-import de.sciss.osc.OSCMessage
-import de.sciss.synth._
+import collection.immutable.{ IndexedSeq => IIdxSeq, Map => IMap, Set => ISet }
+import de.sciss.synth.{AddAction, Server}
 
 /**
  *    @version 0.12, 20-Jul-10
@@ -42,12 +41,6 @@ import de.sciss.synth._
  *          occurences of Proc.local with Actor.self 
  */
 object Proc extends ThreadLocalObject[ Proc ] {
-//   case class PlayingChanged( proc: Proc, playing: Boolean )
-//   case class ControlsChanged( controls: (ProcControl, Float)* )
-//   case class MappingsChanged( controls: (ProcControl, Option[ ProcControlMapping ])* )
-//   case class AudioBusesConnected( edges: ProcEdge* )
-//   case class AudioBusesDisconnected( edges: ProcEdge* )
-
    case class Update( proc: Proc, state: State,
                       controls: IMap[ ProcControl, ControlValue ],
                       audioBusesConnected: ISet[ ProcEdge ],
@@ -77,11 +70,6 @@ trait Proc extends TxnModel[ Proc.Update ] with TxnPlayer with ProcSpec {
       val busConns: ISet[ ProcEdge ]                                 = outEdges 
       Update( this, state, ctlVals, busConns, Set.empty )
    }
-
-//   def getFloat( name: String )( implicit tx: ProcTxn ) : Float
-//   def setFloat( name: String, value: Float )( implicit tx: ProcTxn ) : Proc
-//   def getString( name: String )( implicit tx: ProcTxn ) : String
-//   def setString( name: String, value: String )( implicit tx: ProcTxn ) : Proc
 
    def outEdges( implicit tx: ProcTxn ) : ISet[ ProcEdge ]
 
@@ -129,12 +117,6 @@ trait Proc extends TxnModel[ Proc.Update ] with TxnPlayer with ProcSpec {
    def anchorNode( implicit tx: ProcTxn ) : RichNode
    
    def runningTarget( requireGroup: Boolean )( implicit tx: ProcTxn ) : (RichNode, AddAction)
-
-//   def backGroup( implicit tx: ProcTxn ) : RichGroup
-
-//   private[proc] def connect( out: ProcAudioOutput, in: ProcAudioInput )( implicit tx: ProcTxn ) : Unit
-//   private[proc] def disconnect( out: ProcAudioOutput, in: ProcAudioInput ) : Unit
-//   private[proc] def insert( out: ProcAudioOutput, in: ProcAudioInput, insert: (ProcAudioInput, ProcAudioOutput) ) : Unit
 }
 
 case class ProcEdge( out: ProcAudioOutput, in: ProcAudioInput )

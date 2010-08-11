@@ -28,9 +28,10 @@
 
 package de.sciss.synth.proc.impl
 
-import de.sciss.synth.proc._
 import de.sciss.synth.Server
 import collection.immutable.{ IndexedSeq => IIdxSeq }
+import de.sciss.synth.proc.{ Proc, ProcAnatomy, ProcDemiurg, ProcEntry, ProcFactory, ProcGraph, ProcParam,
+   ProcParamAudioInput, ProcParamAudioOutput, ProcTxn }
 
 /**
  *    @version 0.11, 20-Jul-10

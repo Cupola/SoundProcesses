@@ -1,0 +1,70 @@
+val x = gen {
+    val aux = gen {
+        val ppos = pScalar( "pos", ... )
+        graph {
+            val b = bufCue( ..., ppos.ir )
+            VDiskIn.ar( b.id.... )
+        }
+    }
+    graph { Silent.ar( 2 )} // ugly
+    trigger( "bang" ) { implicit t =>
+        val p = aux.make
+        p.control( "pos" ).v = rnd.nextDouble
+        p.play
+    }
+}
+
+val y = x.make
+y.play
+y.trigger( "bang" )
+
+///
+maybe instead of
+
+    graph { Silent.ar( 2 )} // ugly
+
+we have
+
+    idle( 2 ) // ?
+
+or for filters:
+
+    idle { ch => ch }
+
+?
+
+or : setup( 2 ) / setup { _ => _ }
+
+?
+
+///
+another simplification. instead of 
+
+        val p = aux.make
+        p.control( "pos" ).v = rnd.nextDouble
+        p.play
+
+we could have
+
+        aux.play( "pos" -> rnd.nextDouble )
+
+so:
+
+
+val x = gen {
+    val aux = gen {
+        val ppos = pScalar( "pos", ... )
+        graph {
+            val b = bufCue( ..., ppos.ir )
+            VDiskIn.ar( b.id.... )
+        }
+    }
+    idle { 2 }
+    trigger( "bang" ) { implicit t =>
+        aux.play( "pos" -> rnd.nextDouble )
+    }
+}
+
+which is reasonably concise.
+// the elimination of "implicit t" can come later by using a TxnLocal which returns the Txn itself
+

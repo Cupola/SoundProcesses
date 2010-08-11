@@ -28,9 +28,8 @@
 
 package de.sciss.synth.proc.impl
 
-import de.sciss.synth.proc._
-import de.sciss.synth._
-import de.sciss.synth.io.AudioFile
+import de.sciss.synth.{Buffer, Server}
+import de.sciss.synth.proc.{AudioFileCache, RichBuffer, ProcTxn, ProcBuffer}
 
 /**
  *    @version 0.11, 19-Jul-10

@@ -28,7 +28,8 @@
 
 package de.sciss.synth.proc
 
-import de.sciss.synth._
+import de.sciss.synth
+import de.sciss.synth.GE
 
 /**
  *    @version 0.11, 04-Jul-10
@@ -58,15 +59,21 @@ trait Warp {
 }
 
 object LinWarp extends Warp {
+   import synth._
+
    def map( spec: ParamSpec, value: Double ) : Double    = value * spec.range + spec.lo
    def unmap( spec: ParamSpec, value: Double ) : Double  = (value - spec.lo) / spec.range
+
    def map( spec: ParamSpec, value: GE ) : GE            = value * spec.range + spec.lo
    def unmap( spec: ParamSpec, value: GE ) : GE          = (value - spec.lo) / spec.range
 }
 
 object ExpWarp extends Warp {
+   import synth._
+
    def map( spec: ParamSpec, value: Double ) : Double    = spec.ratio.pow( value ) * spec.lo
    def unmap( spec: ParamSpec, value: Double ) : Double  = (value / spec.lo).log / spec.ratio.log
+
    def map( spec: ParamSpec, value: GE ) : GE            = (spec.hi / spec.lo).pow( value ) * spec.lo
    def unmap( spec: ParamSpec, value: GE ) : GE          = (value / spec.lo).log / spec.ratio.log
 }
