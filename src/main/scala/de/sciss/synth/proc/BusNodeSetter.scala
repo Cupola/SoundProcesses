@@ -33,22 +33,17 @@ import de.sciss.synth.{Bus, ControlBus, AudioBus}
 /**
  *    @version 0.11, 03-Aug-10
  */
-trait BusNodeSetter {
-   def add( implicit tx: ProcTxn ) : Unit
-   def remove( implicit tx: ProcTxn ) : Unit
-   def bus: RichBus
+trait BusNodeSetter extends DynamicBusUser {
    def node: RichNode
    def controlName: String
 //   def migrateTo( newBus: RichBus )( implicit tx: ProcTxn ) : BusNodeSetter
 }
 
-trait AudioBusNodeSetter extends BusNodeSetter {
-   def bus: RichAudioBus
+trait AudioBusNodeSetter extends BusNodeSetter with DynamicAudioBusUser {
    def migrateTo( newBus: RichAudioBus )( implicit tx: ProcTxn ) : AudioBusNodeSetter
 }
 
-trait ControlBusNodeSetter extends BusNodeSetter {
-   def bus: RichControlBus
+trait ControlBusNodeSetter extends BusNodeSetter with DynamicControlBusUser {
    def migrateTo( newBus: RichControlBus )( implicit tx: ProcTxn ) : ControlBusNodeSetter
 }
 

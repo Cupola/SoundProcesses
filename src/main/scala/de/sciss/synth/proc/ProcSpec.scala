@@ -1,6 +1,6 @@
 /*
- *  ThreadLocalObject.scala
- *  (ScalaCollider-Proc)
+ *  ProcSpec.scala
+ *  (SoundProcesses)
  *
  *  Copyright (c) 2010 Hanns Holger Rutz. All rights reserved.
  *
@@ -28,30 +28,16 @@
 
 package de.sciss.synth.proc
 
-/**
- *    @version 0.11, 09-Jul-10
- */
-//trait ThreadLocalLike[ T <: AnyRef ] {
-//   def local : T
-//   def use[ U ]( obj: T )( thunk: => U ) : U
-//}
+import collection.immutable.{ IndexedSeq => IIdxSeq }
 
-trait ThreadLocalObject[ T <: AnyRef ] { // extends ThreadLocalLike[ T ]
-   protected val tl = new ThreadLocal[ T ]
+sealed abstract class ProcAnatomy
+case object ProcGen    extends ProcAnatomy
+case object ProcFilter extends ProcAnatomy
+case object ProcDiff   extends ProcAnatomy
 
-   def local : T = {
-      val res = tl.get
-      require( res != null, "Out of context access" )
-      res
-   }
-
-   def use[ U ]( obj: T )( thunk: => U ) : U = {
-      val old = tl.get()
-      tl.set( obj )
-      try {
-         thunk
-      } finally {
-         tl.set( old ) // null.asInstanceOf[ T ]
-      }
-   }
+trait ProcSpec {
+   def name : String
+   def anatomy : ProcAnatomy
+   def params : IIdxSeq[ ProcParam ]   // XXX change naming
+   def param( name: String ) : ProcParam
 }

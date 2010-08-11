@@ -114,48 +114,72 @@ extends ProcFactoryBuilder {
       p
    }
 
-   private def getImplicitIn : GE = Proc.local.param( "in" ).asInstanceOf[ ProcParamAudioInput ].ar
-   private def getImplicitOut( sig: GE ) : GE = {
+   private def implicitInAr : GE = Proc.local.param( "in" ).asInstanceOf[ ProcParamAudioInput ].ar
+   private def implicitOutAr( sig: GE ) : GE = {
       val rate = Rate.highest( sig.outputs.map( _.rate ): _* )
       if( (rate == audio) || (rate == control) ) {
          Proc.local.param( "out" ).asInstanceOf[ ProcParamAudioOutput ].ar( sig )
       } else sig
    }
+   private def implicitInNumCh : Int = Proc.local.param( "in" ).asInstanceOf[ ProcParamAudioInput ].numChannels
+   private def implicitOutNumCh( n: Int ) { Proc.local.param( "out" ).asInstanceOf[ ProcParamAudioOutput ].numChannels_=( n )}
 
    def graphIn( fun: GE => GE ) : ProcGraph = {
-      val fullFun = () => fun( getImplicitIn )
+      val fullFun = () => fun( implicitInAr )
       graph( fullFun )
    }
 
    def graphInOut( fun: GE => GE ) : ProcGraph = {
       val fullFun = () => {
-         val in   = getImplicitIn
+         val in   = implicitInAr
          val out  = fun( in )
-         getImplicitOut( out )
+         implicitOutAr( out )
       }
       graph( fullFun )
    }
 
    def graphOut( fun: () => GE ) : ProcGraph = {
-      val fullFun = () => getImplicitOut( fun() )
+      val fullFun = () => implicitOutAr( fun() )
       graph( fullFun )
    }
 
    def graph( fun: () => GE ) : ProcGraph = {
       requireOngoing
-//      require( graph.isEmpty, "Graph already defined" )
       val res = new GraphImpl( fun )
-//      graph = Some( res )
       enter( res )
       res
    }
 
-   def idle( fun: Int => Int ) : ProcIdle = {
-      error( "NOT YET IMPLEMENTED" )
+   def idleIn( fun: Int => Any ) : ProcIdle = {
+      val fullFun: Function0[ Unit ] = () => fun( implicitInNumCh )
+      idle( fullFun )
+   }
+   
+   def idleOut( fun: () => Int ) : ProcIdle = {
+      val fullFun = () => implicitOutNumCh( fun() )
+      idle( fullFun )
    }
 
-   def idle( fun: () => Int ) : ProcIdle = {
-      error( "NOT YET IMPLEMENTED" )
+   def idleInOut( fun: Int => Any ) : ProcIdle = {
+      val fullFun = () => {
+         val inCh = implicitInNumCh
+         fun( inCh ) match {
+            case outCh: Int => implicitOutNumCh( outCh )
+            case _ => error( "Idle in this context requires an Int result (number of output channels)" )
+         }
+      }
+      idle( fullFun )
+   }
+
+   def idle : ProcIdle = {
+      idle( () => () )
+   }
+   
+   private def idle( fun: () => Unit ) : ProcIdle = {
+      requireOngoing
+      val res = new IdleImpl( fun )
+      enter( res )
+      res
    }
 
    private def enter( e: ProcEntry ) {

@@ -1,5 +1,5 @@
 /*
- *  ThreadLocalObject.scala
+ *  ProcEntry.scala
  *  (ScalaCollider-Proc)
  *
  *  Copyright (c) 2010 Hanns Holger Rutz. All rights reserved.
@@ -29,29 +29,16 @@
 package de.sciss.synth.proc
 
 /**
- *    @version 0.11, 09-Jul-10
+ *    @version 0.12, 19-Jul-10
  */
-//trait ThreadLocalLike[ T <: AnyRef ] {
-//   def local : T
-//   def use[ U ]( obj: T )( thunk: => U ) : U
-//}
-
-trait ThreadLocalObject[ T <: AnyRef ] { // extends ThreadLocalLike[ T ]
-   protected val tl = new ThreadLocal[ T ]
-
-   def local : T = {
-      val res = tl.get
-      require( res != null, "Out of context access" )
-      res
-   }
-
-   def use[ U ]( obj: T )( thunk: => U ) : U = {
-      val old = tl.get()
-      tl.set( obj )
-      try {
-         thunk
-      } finally {
-         tl.set( old ) // null.asInstanceOf[ T ]
-      }
-   }
+// XXX THIS SHOULD EXTEND TxnPlayer AND WE KILL OFF ProcRunning
+trait ProcEntry {
+   def play( implicit tx: ProcTxn ) : ProcRunning
 }
+
+trait ProcEntryBuilder {
+   def tx: ProcTxn
+   def includeParam( p: ProcParam ) : Unit
+}
+
+object ProcEntryBuilder extends ThreadLocalObject[ ProcEntryBuilder ]

@@ -10,18 +10,10 @@ import de.sciss.synth.{ ControlSetMap, SingleControlSetMap, SynthGraph }
 /**
  *    @version 0.12, 03-Aug-10
  */
-class GraphBuilderImpl( graph: GraphImpl, val tx: ProcTxn ) extends ProcGraphBuilder {
-//      var controls   = Set.empty[ ControlSetMap ]
-   var usedParams = Set.empty[ ProcParam ]
+class GraphBuilderImpl( graph: GraphImpl, val tx: ProcTxn )
+extends EntryBuilderImpl with ProcGraphBuilder {
    var buffers    = Set.empty[ ProcBuffer ]
    private var bufCount = 0
-
-   // XXX we might not even need this, at least for graphs
-   // as the included parameters are directly accessible
-   // from the SynthGraph !
-   def includeParam( param: ProcParam ) {
-      usedParams += param
-   }
 
    def includeBuffer( b: ProcBuffer ) {
       buffers += b

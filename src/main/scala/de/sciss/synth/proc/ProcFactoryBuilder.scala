@@ -48,8 +48,10 @@ trait ProcFactoryBuilder {
    def graphIn( fun: GE => GE ) : ProcGraph
    def graphInOut( fun: GE => GE ) : ProcGraph
 
-   def idle( fun: () => Int ) : ProcIdle
-   def idle( fun: Int => Int ) : ProcIdle
+   def idleOut( fun: () => Int ) : ProcIdle
+   def idle : ProcIdle
+   def idleIn( fun: Int => Any ) : ProcIdle
+   def idleInOut( fun: Int => Any ) : ProcIdle
 
    def finish : ProcFactory
 

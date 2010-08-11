@@ -30,7 +30,7 @@ package de.sciss.synth.proc.impl
 
 import de.sciss.synth.ugen.{ In, Out }
 import de.sciss.synth.{ audio, control, GE }
-import de.sciss.synth.proc.{ ParamSpec, Proc, ProcGraphBuilder, ProcParamAudio, ProcParamAudioInput,
+import de.sciss.synth.proc.{ ParamSpec, Proc, ProcEntryBuilder, ProcParamAudio, ProcParamAudioInput,
    ProcParamAudioOutput, ProcParamControl, ProcParamScalar,
    ProcParamUnspecifiedException, RichAudioBus, RichBus }
 import de.sciss.synth
@@ -43,7 +43,7 @@ extends ProcParamScalar {
    def ir : GE = {
       import synth._
       val p             = Proc.local
-      val pb            = ProcGraphBuilder.local
+      val pb            = ProcEntryBuilder.local
       implicit val tx   = pb.tx
       val c             = p.control( name )
       pb.includeParam( this )
@@ -52,7 +52,7 @@ extends ProcParamScalar {
 
    def v : Double = {
       val p             = Proc.local
-      val pb            = ProcGraphBuilder.local
+      val pb            = ProcEntryBuilder.local
       implicit val tx   = pb.tx
       val c             = p.control( name )
       c.v
@@ -64,7 +64,7 @@ extends ProcParamControl {
    def kr : GE = {
       import synth._
       val p             = Proc.local
-      val pb            = ProcGraphBuilder.local
+      val pb            = ProcEntryBuilder.local
       implicit val tx   = pb.tx
       val c             = p.control( name )
       pb.includeParam( this )
@@ -85,7 +85,7 @@ extends ProcParamAudio {
    def ar : GE = {
       import synth._
       val p             = Proc.local
-      val pb            = ProcGraphBuilder.local
+      val pb            = ProcEntryBuilder.local
       implicit val tx   = pb.tx
       val c             = p.control( name )
       pb.includeParam( this )
@@ -106,11 +106,9 @@ extends ProcParamAudio {
 
 class ParamAudioInputImpl( val name: String, val default: Option[ RichAudioBus ], val physical: Boolean )
 extends ProcParamAudioInput {
-
-   def ar : GE = {
-      import synth._
+   private def resolveBusAndIncludeParam : RichAudioBus = {
       val p    = Proc.local
-      val pb   = ProcGraphBuilder.local
+      val pb   = ProcEntryBuilder.local
       implicit val tx   = pb.tx
       val ain = p.audioInput( name )
       val b = ain.bus.getOrElse({
@@ -135,8 +133,18 @@ extends ProcParamAudioInput {
          } else pError( name ) // throw e
       })
       pb.includeParam( this ) // important: must be after ain.bus_= NO NOT TRUE - DOES NOT MATTER
+      b
+   }
 
+   def ar : GE = {
+      import synth._
+      val b = resolveBusAndIncludeParam
       In.ar( name.kr, b.numChannels )
+   }
+
+   def numChannels : Int = {
+      val b = resolveBusAndIncludeParam
+      b.numChannels
    }
 
    private def pError( name: String ) = throw new ProcParamUnspecifiedException( name )
@@ -144,12 +152,9 @@ extends ProcParamAudioInput {
 
 class ParamAudioOutputImpl( val name: String, val default: Option[ RichAudioBus ], val physical: Boolean )
 extends ProcParamAudioOutput {
-
-   def ar( sig: GE ) : GE = {
-      import synth._
-      val numChannels   = sig.numOutputs
+   private def resolveBusAndIncludeParam( numChannels: Int ) : RichAudioBus = {
       val p             = Proc.local
-      val pb            = ProcGraphBuilder.local
+      val pb            = ProcEntryBuilder.local
       implicit val tx   = pb.tx
       val aout          = p.audioOutput( name )
       val b             = aout.bus getOrElse {
@@ -164,17 +169,31 @@ extends ProcParamAudioOutput {
          } else {
             aout.bus = default
             default.getOrElse( pError( name ))
-         } 
+         }
       }
       pb.includeParam( this ) // important: must be after aout.bus_= NO NOT TRUE DOES NOT MATTER
-      val sig2: GE = if( b.numChannels == numChannels ) {
+      b
+   }
+
+   def ar( sig: GE ) : GE = {
+      import synth._
+      val numCh   = sig.numOutputs
+      val b       = resolveBusAndIncludeParam( numCh )
+      val sig2: GE = if( b.numChannels == numCh ) {
          sig
       } else {
-         println( "WARNING: Coercing output signal from " + numChannels + " into " + b.numChannels + " channels" )
+         println( "WARNING: Coercing output signal from " + numCh + " into " + b.numChannels + " channels" )
          val chans   = sig.outputs
-         List.tabulate( b.numChannels )( ch => chans( ch % numChannels ))
+         List.tabulate( b.numChannels )( ch => chans( ch % numCh ))
       }
       Out.ar( name.kr, sig2 )
+   }
+
+   def numChannels_=( n: Int ) {
+      val b = resolveBusAndIncludeParam( n )
+      if( b.numChannels != n ) {
+         error( "Output bus already has " + b.numChannels + " channels. Cannot change to  " + n )
+      }
    }
 
    private def pError( name: String ) = throw new ProcParamUnspecifiedException( name )

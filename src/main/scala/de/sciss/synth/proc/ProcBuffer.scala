@@ -1,6 +1,6 @@
 /*
- *  ThreadLocalObject.scala
- *  (ScalaCollider-Proc)
+ *  ProcBuffer.scala
+ *  (SoundProcesses)
  *
  *  Copyright (c) 2010 Hanns Holger Rutz. All rights reserved.
  *
@@ -28,30 +28,25 @@
 
 package de.sciss.synth.proc
 
-/**
- *    @version 0.11, 09-Jul-10
- */
-//trait ThreadLocalLike[ T <: AnyRef ] {
-//   def local : T
-//   def use[ U ]( obj: T )( thunk: => U ) : U
-//}
+import de.sciss.synth
+import de.sciss.synth.{Server, GE}
 
-trait ThreadLocalObject[ T <: AnyRef ] { // extends ThreadLocalLike[ T ]
-   protected val tl = new ThreadLocal[ T ]
+trait ProcBuffer {
+   def controlName : String
+   private[proc] def create( server: Server )( implicit tx: ProcTxn ) : RichBuffer
 
-   def local : T = {
-      val res = tl.get
-      require( res != null, "Out of context access" )
-      res
+   private[proc] def disposeWith( rb: RichBuffer, rs: RichSynth ) {
+      rs.synth.onEnd { rb.server ! rb.buf.closeMsg( rb.buf.freeMsg )} // XXX update RichBuffer fields !
    }
 
-   def use[ U ]( obj: T )( thunk: => U ) : U = {
-      val old = tl.get()
-      tl.set( obj )
-      try {
-         thunk
-      } finally {
-         tl.set( old ) // null.asInstanceOf[ T ]
-      }
+   // ---- scope : graph (ProcGraphBuilder) ----
+
+//   def id : GE
+   def id : GE = {
+      import synth._
+      ProcGraphBuilder.local.includeBuffer( this )
+      controlName.kr
    }
+
+   def numChannels : Int
 }

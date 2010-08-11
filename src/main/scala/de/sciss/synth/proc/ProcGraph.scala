@@ -28,26 +28,21 @@
 
 package de.sciss.synth.proc
 
-/**
- *    @version 0.12, 19-Jul-10
- */
-// XXX THIS SHOULD EXTEND TxnPlayer AND WE KILL OFF ProcRunning
-trait ProcEntry {
-//   def play( target: RichGroup )( implicit tx: ProcTxn ) : ProcRunning
-   def play( implicit tx: ProcTxn ) : ProcRunning
-}
-
-trait ProcGraph extends ProcEntry {
-}
-
+trait ProcGraph extends ProcEntry
 object ProcGraphBuilder extends ThreadLocalObject[ ProcGraphBuilder ] {
+   override def use[ U ]( obj: ProcGraphBuilder )( thunk: => U ) : U = {
+      val old = tl.get()
+      tl.set( obj )
+      try {
+         ProcEntryBuilder.use( obj )( thunk )  // XXX bit stupid the nesting
+      } finally {
+         tl.set( old )
+      }
+   }
 }
 
-trait ProcGraphBuilder {
-   def tx: ProcTxn
-   def includeParam( p: ProcParam ) : Unit
+trait ProcGraphBuilder extends ProcEntryBuilder {
    def includeBuffer( b: ProcBuffer ) : Unit
-
    def bufCue( path: String, startFrame: Long ) : ProcBuffer
    def bufEmpty( numFrames: Int, numChannels: Int ) : ProcBuffer
 }

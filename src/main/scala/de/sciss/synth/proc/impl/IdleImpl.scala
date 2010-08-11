@@ -1,5 +1,5 @@
 /*
- *  ThreadLocalObject.scala
+ *  IdleImpl.scala
  *  (ScalaCollider-Proc)
  *
  *  Copyright (c) 2010 Hanns Holger Rutz. All rights reserved.
@@ -26,32 +26,14 @@
  *  Changelog:
  */
 
-package de.sciss.synth.proc
+package de.sciss.synth.proc.impl
+
+import de.sciss.synth.proc.{ProcIdle, ProcRunning, ProcTxn}
 
 /**
- *    @version 0.11, 09-Jul-10
+ *    @version 0.15, 11-Aug-10
  */
-//trait ThreadLocalLike[ T <: AnyRef ] {
-//   def local : T
-//   def use[ U ]( obj: T )( thunk: => U ) : U
-//}
-
-trait ThreadLocalObject[ T <: AnyRef ] { // extends ThreadLocalLike[ T ]
-   protected val tl = new ThreadLocal[ T ]
-
-   def local : T = {
-      val res = tl.get
-      require( res != null, "Out of context access" )
-      res
-   }
-
-   def use[ U ]( obj: T )( thunk: => U ) : U = {
-      val old = tl.get()
-      tl.set( obj )
-      try {
-         thunk
-      } finally {
-         tl.set( old ) // null.asInstanceOf[ T ]
-      }
-   }
+class IdleImpl( val fun: () => Unit ) extends ProcIdle {
+   def play( implicit tx: ProcTxn ) : ProcRunning =
+      new IdleBuilderImpl( this, tx ).play
 }

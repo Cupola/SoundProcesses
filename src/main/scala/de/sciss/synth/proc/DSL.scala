@@ -28,13 +28,10 @@
 
 package de.sciss.synth.proc
 
-import de.sciss.synth._
-import de.sciss.osc.OSCBundle
-import collection.immutable.{ IndexedSeq => IIdxSeq }
-import io.AudioFileSpec
 import reflect.ClassManifest
-import ugen.{SendTrig, VDiskIn}
-import java.io.{IOException, File}
+import java.io.{ IOException }
+import de.sciss.synth.{GE}
+import de.sciss.synth.io.AudioFileSpec
 
 /**
  *    @version 0.15, 11-Aug-10
@@ -154,7 +151,7 @@ object DSL {
       val b = ProcFactoryBuilder.local
       b.anatomy match {
          case ProcGen    => b.graphOut( () => thunk )
-         case ProcFilter => b.graphInOut( in => thunk )
+         case ProcFilter => b.graphOut( () => thunk ) // b.graphInOut( in => thunk )
          case ProcDiff   => b.graph( () => thunk )
       }
    }
@@ -179,14 +176,29 @@ object DSL {
 
    def idle( thunk: => Int ) : ProcIdle = {
       val b = ProcFactoryBuilder.local
-      b.idle( () => thunk )
+//      b.idle( () => thunk )
+      b.anatomy match {
+         case ProcGen    => b.idleOut( () => thunk )
+         case ProcFilter => b.idleOut( () => thunk ) // b.idleInOut( in => thunk )
+         case ProcDiff   => error( "Diffusions do not have a default output" )
+      }
    }
 
-   def idle( fun: Int => Int ) : ProcIdle = {
+   def idle( fun: Int => Any ) : ProcIdle = {
       val b = ProcFactoryBuilder.local
       b.anatomy match {
          case ProcGen    => error( "Generators do not have a default input" )
-         case _          => b.idle( fun )
+         case ProcFilter => b.idleInOut( fun )
+         case ProcDiff   => b.idleIn( fun )
+      }
+   }
+
+   def idle : ProcIdle = {
+      val b = ProcFactoryBuilder.local
+      b.anatomy match {
+         case ProcGen    => error( "Generators require explicit output" )
+         case ProcFilter => idle( (i: Int) => i )
+         case ProcDiff   => b.idle
       }
    }
 
@@ -215,49 +227,6 @@ object DSL {
       p.audioInput( "in" ) -> p.audioOutput( "out" )
 }
 
-trait ProcBuffer {
-   def controlName : String
-   private[proc] def create( server: Server )( implicit tx: ProcTxn ) : RichBuffer
-
-   private[proc] def disposeWith( rb: RichBuffer, rs: RichSynth ) {
-      rs.synth.onEnd { rb.server ! rb.buf.closeMsg( rb.buf.freeMsg )} // XXX update RichBuffer fields !
-   }
-
-   // ---- scope : graph (ProcGraphBuilder) ----
-   
-//   def id : GE
-   def id : GE = {
-      ProcGraphBuilder.local.includeBuffer( this )
-      controlName.kr
-   }
-
-   def numChannels : Int
-}
-
-sealed abstract class ProcAnatomy
-case object ProcGen    extends ProcAnatomy
-case object ProcFilter extends ProcAnatomy
-case object ProcDiff   extends ProcAnatomy
-
-trait ProcSpec {
-   def name : String
-   def anatomy : ProcAnatomy
-   def params : IIdxSeq[ ProcParam ]   // XXX change naming
-   def param( name: String ) : ProcParam
-}
-
 trait ProcFactory extends ProcSpec {
    def make( implicit tx: ProcTxn ) : Proc
 }
-
-//trait ProcGenFactory extends ProcFactory {
-//   def make( implicit tx: ProcTxn ) : ProcGen
-//}
-//
-//trait ProcFilterFactory extends ProcFactory {
-//   def make( implicit tx: ProcTxn ) : ProcFilter
-//}
-//
-//trait ProcDiffFactory extends ProcFactory {
-//   def make( implicit tx: ProcTxn ) : ProcDiff
-//}

@@ -43,24 +43,9 @@ class ProcParamUnspecifiedException( name: String )
 extends RuntimeException( "Proc parameter unspecified: "  + name )
                                                                                                              
 trait ProcParamFloat extends ProcParam {
-//   def kr      : GE = name.kr( default.getOrElse( spec.lo ))
-//   def mapKr   : GE = spec.map( name.kr( spec.unmap( default.getOrElse( spec.lo ))))
-
-//   def ir : GE
-//   def kr : GE
-   
-//   def ir : GE = {
-//      ProcGraphBuilder.local.includeParam( this )
-//      name.ir( default.getOrElse( 0f ))
-//   }
-
    def spec : ParamSpec
    def default : Double
 }
-
-//trait ProcParamMappableFloat extends ProcParamFloat {
-//   def rate : Rate
-//}
 
 trait ProcParamScalar extends ProcParamFloat {
    def ir : GE
@@ -69,31 +54,13 @@ trait ProcParamScalar extends ProcParamFloat {
 
 trait ProcParamControl extends ProcParamFloat {
    def kr : GE
-//   = {
-//      ProcGraphBuilder.local.includeParam( this )
-//      name.kr( default.getOrElse( 0f ))
-//   }
 }
 
 trait ProcParamAudio extends ProcParamFloat {
    def ar : GE
-//   = {
-//      ProcGraphBuilder.local.includeParam( this )
-//      name.ar( default.getOrElse( 0f ))
-//   }
 }
 
-//trait ProcParamString extends ProcParam {
-//// XXX defaults???
-//}
-
 sealed trait ProcParamAudioBus extends ProcParam {
-//   def index : GE = {
-//      ProcGraphBuilder.local.includeParam( this )
-//      name.kr( 0 ) // default.map( _._1 ).getOrElse( 0 )) // XXX
-//   }
-//
-
    // ---- scope: graph ----
 // currently disabled:
 //   def numChannels : Int
@@ -104,19 +71,12 @@ sealed trait ProcParamAudioBus extends ProcParam {
 trait ProcParamAudioInput extends ProcParamAudioBus {
    // ---- scope: graph ----
    def ar : GE
-//   = {
-//// note: index already includes the parameter
-////      ProcGraphBuilder.local.includeParam( this )
-//      In.ar( index, numChannels )
-//   }
+   def numChannels : Int
 }
 
 trait ProcParamAudioOutput extends ProcParamAudioBus {
    // ---- scope: graph ----
    def ar( sig: GE ) : GE
-//   = {
-//// note: index already includes the parameter
-////      ProcGraphBuilder.local.includeParam( this )
-//      Out.ar( index, sig )
-//   }
+//   def numChannels : Int
+   def numChannels_=( n: Int ) : Unit
 }
