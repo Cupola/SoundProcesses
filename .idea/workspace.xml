@@ -2,30 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" readonly="true" id="f73d71e1-17e4-441e-b380-776f21955f0b" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/RunningIdleImpl.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/ParamImpl.scala" afterPath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/ParamImpl.scala" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/ProcBuffer.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/ProcParam.scala" afterPath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/ProcParam.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/GraphBuilderImpl.scala" afterPath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/GraphBuilderImpl.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/SoundProcesses.scala" afterPath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/SoundProcesses.scala" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/ProcEntry.scala" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/EntryBuilderImpl.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/ProcGraph.scala" afterPath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/ProcGraph.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/SoundProcesses.iml" afterPath="$PROJECT_DIR$/SoundProcesses.iml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/IdleBuilderImpl.scala" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/ProcSpec.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/FactoryBuilderImpl.scala" afterPath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/FactoryBuilderImpl.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/project/build/SoundProcesses.scala" afterPath="$PROJECT_DIR$/project/build/SoundProcesses.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/DSL.scala" afterPath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/DSL.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/ThreadLocalObject.scala" afterPath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/ThreadLocalObject.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/ProcFactoryBuilder.scala" afterPath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/ProcFactoryBuilder.scala" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/IdleImpl.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/BusNodeSetter.scala" afterPath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/BusNodeSetter.scala" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/DynamicBusUser.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/DynamicBusUser.scala" afterPath="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/DynamicBusUser.scala" />
     </list>
-    <ignored path=".idea/workspace.xml" />
     <ignored path="SoundProcesses.iws" />
+    <ignored path=".idea/workspace.xml" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -106,10 +87,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="IdleBuilderImpl.scala" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="IdleBuilderImpl.scala" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/IdleBuilderImpl.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="38" column="34" selection-start="1777" selection-end="1777" vertical-scroll-proportion="1.2127659">
+            <state line="38" column="34" selection-start="1777" selection-end="1777" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -145,16 +126,16 @@
       <file leaf-file-name="BusNodeSetter.scala" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/BusNodeSetter.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="68" column="0" selection-start="1637" selection-end="2567" vertical-scroll-proportion="0.0">
+            <state line="114" column="0" selection-start="4093" selection-end="4160" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DynamicBusUser.scala" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="DynamicBusUser.scala" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/DynamicBusUser.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="50" column="91" selection-start="1588" selection-end="1588" vertical-scroll-proportion="0.0">
+            <state line="88" column="80" selection-start="3595" selection-end="3595" vertical-scroll-proportion="0.8367347">
               <folding />
             </state>
           </provider>
@@ -163,7 +144,7 @@
       <file leaf-file-name="BusManagement.scala" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/BusManagement.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="86" column="19" selection-start="2879" selection-end="2891" vertical-scroll-proportion="0.0">
+            <state line="99" column="0" selection-start="3400" selection-end="3469" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -214,9 +195,9 @@
         <option value="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/ParamImpl.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/RunningIdleImpl.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/BusDummyUser.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/IdleBuilderImpl.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/BusNodeSetter.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/DynamicBusUser.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/IdleBuilderImpl.scala" />
       </list>
     </option>
   </component>
@@ -255,9 +236,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Scope" />
-      <pane id="Favorites" />
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -930,6 +908,9 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scope" />
+      <pane id="PackagesPane" />
+      <pane id="Favorites" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -1140,15 +1121,14 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="22" width="1396" height="878" extended-state="0" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32908162" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39923468" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32908162" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32908162" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -1158,6 +1138,7 @@
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32908162" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32908162" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
@@ -1199,112 +1180,88 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/ProcEntry.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="38" column="6" selection-start="1191" selection-end="1191" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="38" column="6" selection-start="1191" selection-end="1191" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/IdleImpl.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="37" column="6" selection-start="1230" selection-end="1230" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="37" column="6" selection-start="1230" selection-end="1230" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/ProcParam.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="80" column="0" selection-start="2101" selection-end="2128" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="80" column="0" selection-start="2101" selection-end="2128" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/FactoryBuilderImpl.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="124" column="125" selection-start="4773" selection-end="4773" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="124" column="125" selection-start="4773" selection-end="4773" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/ProcIO.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="38" column="7" selection-start="1195" selection-end="1195" vertical-scroll-proportion="0.3319149">
-          <folding />
-        </state>
+        <state line="38" column="7" selection-start="1195" selection-end="1195" vertical-scroll-proportion="0.3319149" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/ParamImpl.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="146" column="21" selection-start="5168" selection-end="5168" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/EntryBuilderImpl.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="4" column="47" selection-start="123" selection-end="139" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="146" column="21" selection-start="5168" selection-end="5168" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/GraphBuilderImpl.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="104" column="0" selection-start="1089" selection-end="4324" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="104" column="0" selection-start="1089" selection-end="4324" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/RunningGraphImpl.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="37" column="19" selection-start="0" selection-end="3597" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/ProcRunning.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="33" column="6" selection-start="1058" selection-end="1058" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="37" column="19" selection-start="0" selection-end="3597" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/RunningIdleImpl.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="36" column="82" selection-start="1296" selection-end="1314" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="36" column="82" selection-start="1296" selection-end="1314" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/BusPlayerImpl.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="4" column="76" selection-start="152" selection-end="170" vertical-scroll-proportion="0.0">
+        <state line="4" column="76" selection-start="152" selection-end="170" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/ProcRunning.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="33" column="6" selection-start="1058" selection-end="1058" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/EntryBuilderImpl.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="4" column="47" selection-start="123" selection-end="139" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/IdleBuilderImpl.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="38" column="34" selection-start="1777" selection-end="1777" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/BusManagement.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="86" column="19" selection-start="2879" selection-end="2891" vertical-scroll-proportion="0.0">
+        <state line="99" column="0" selection-start="3400" selection-end="3469" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/BusNodeSetter.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="68" column="0" selection-start="1637" selection-end="2567" vertical-scroll-proportion="0.0">
+        <state line="114" column="0" selection-start="4093" selection-end="4160" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/DynamicBusUser.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="50" column="91" selection-start="1588" selection-end="1588" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/de/sciss/synth/proc/impl/IdleBuilderImpl.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="38" column="34" selection-start="1777" selection-end="1777" vertical-scroll-proportion="1.2127659">
+        <state line="88" column="80" selection-start="3595" selection-end="3595" vertical-scroll-proportion="0.8367347">
           <folding />
         </state>
       </provider>
