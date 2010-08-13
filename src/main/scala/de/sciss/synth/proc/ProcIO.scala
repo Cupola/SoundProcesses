@@ -32,7 +32,7 @@ import de.sciss.synth.{ Rate }
 import collection.immutable.{ Set => ISet }
 
 /**
- *    @version 0.12, 09-Jul-10
+ *    @version 0.15, 13-Aug-10
  */
 sealed trait ProcAudioBus extends TxnPlayer {
    def proc : Proc
@@ -43,6 +43,7 @@ sealed trait ProcAudioBus extends TxnPlayer {
 //   def index( implicit tx: ProcTxn ) : Int // -1 : not specified
    def name : String
    def edges( implicit tx: ProcTxn ) : ISet[ ProcEdge ]
+   def dispose( implicit tx: ProcTxn ) : Unit
 }
 
 trait ProcAudioOutput extends ProcAudioBus {

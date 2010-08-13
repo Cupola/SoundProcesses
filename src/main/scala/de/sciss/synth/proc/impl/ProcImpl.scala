@@ -424,9 +424,15 @@ extends Proc {
       state = state.copy( playing = false )
    }
 
+   private def disposeEdges( implicit tx: ProcTxn ) {
+      audioInputs.foreach( _.dispose )
+      audioOutputs.foreach( _.dispose )
+   }
+
    def dispose( implicit tx: ProcTxn ) {
       runningRef() map { r =>
          r.stop
+         disposeEdges   // important to do this after r.stop to avoid re-creating physical outputs!
          tx transit match {
             case Instant => {
                groupsRef() foreach { all =>
@@ -446,6 +452,7 @@ extends Proc {
 //println( "WARNING : Proc.dispose : STILL INCOMPLETE : EDGES ARE NOT YET REMOVED" )
          runningRef.set( None )
       } getOrElse {
+         disposeEdges
          groupsRef() foreach { all =>
             all.main.free()
             groupsRef.set( None )

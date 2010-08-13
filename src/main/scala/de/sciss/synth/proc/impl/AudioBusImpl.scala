@@ -72,6 +72,10 @@ abstract class AudioBusImpl /* extends ProcAudioBus */ /* with RichAudioBus.User
    protected def edgeRemoved( e: ProcEdge )( implicit tx: ProcTxn ) : Unit
 
    def isPlaying( implicit tx: ProcTxn ) : Boolean = playingRef()
+
+   def dispose( implicit tx: ProcTxn ) {
+      edges foreach { e => e.out ~/> e.in }
+   }
 }
 
 abstract class AbstractAudioInputImpl
@@ -383,13 +387,26 @@ extends AudioBusImpl with ProcAudioOutput {
    private def finishConnect( e: ProcEdge )( implicit tx: ProcTxn ) {
       val oldSyn  = synthetic
       if( !oldSyn ) {
+//println( "HERE 1 " + e )
          synthetic = true
-         bus.foreach( oldBus => {
+//         bus.foreach( oldBus => {
+//            val res = RichBus.audio( proc.server, oldBus.numChannels )
+////println( "finishConnect " + e + " -> bus = " + res )
+//            bus = Some( res )
+//         })
+
+// XXX WORKAROUND FOR TEST4
+         bus map { oldBus =>
             val res = RichBus.audio( proc.server, oldBus.numChannels )
 //println( "finishConnect " + e + " -> bus = " + res )
             bus = Some( res )
-         })
+         } getOrElse {
+            // XXX correct???
+            synthetic   = e.in.synthetic
+            bus         = e.in.bus
+         }
       } else {
+//println( "HERE 2 " + e )
          // XXX correct???
          e.in.synthetic   = true
          e.in.bus         = bus

@@ -38,6 +38,7 @@ object SoundProcesses {
       (if( args.size > 0 ) args( 0 ) else "") match {
          case "--test2" => test2
          case "--test3" => test3
+         case "--test4" => test4
          case _ =>
             printInfo
             System.exit( 1 )
@@ -147,6 +148,42 @@ object SoundProcesses {
             s.dumpOSC(1)
             val g1 = collMaster.groupOption
             val g2 = pMaster.groupOption
+            println( "JA" )
+         }
+      }
+   }
+
+   def test4 {
+      import DSL._
+      import de.sciss.synth._
+      import de.sciss.synth.ugen._
+      import ProcTxn.{ atomic => t }
+
+      Server.test { s =>
+         s.dumpOSC(1)
+         ProcDemiurg.addServer( s )
+         t { implicit tx =>
+            val p1 = gen( "1" )({
+               graph { PinkNoise.ar( List( 0.2, 0.2 ))}
+            }).make
+            val p2 = diff( "2" )({
+               graph { in => Out.ar( 0, in )}
+            }).make
+            val p3 = gen( "3" )({
+               graph { SinOsc.ar( List( 400, 410 )) * 0.2 }
+            }).make
+            p1 ~> p2
+            p1.play; p2.play
+
+            xfade( 15 ) {
+               p1.stop
+               p3 ~> p2
+               p3.play
+            }
+
+            val g1 = p1.groupOption
+            val g2 = p2.groupOption
+            val g3 = p3.groupOption
             println( "JA" )
          }
       }

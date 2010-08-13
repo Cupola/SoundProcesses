@@ -1,0 +1,105 @@
+// THIS IS BEFORE APPLYING THE WORKAROUND IN AudioOutputImpl's finishConnect!
+
+Number of Devices: 4
+   0 : "Built-in Microphone"
+   1 : "Built-in Input"
+   2 : "Built-in Output"
+   3 : "Built-in Audio"
+
+"Built-in Microphone" Input Device
+   Streams: 1
+      0  channels 2
+
+"Built-in Output" Output Device
+   Streams: 1
+      0  channels 2
+
+SC_AudioDriver: sample rate = 44100.000000, driver's block size = 512
+PublishPortToRendezvous 0 5855
+SuperCollider 3 server ready.
+r: [ "/n_go", 1, 0, -1, -1, 1, -1, -1 ]
+aOut(1 @ out) : addEdge( ProcEdge(aOut(1 @ out),aIn(2 @ in)) )
+NEW TOPO = Topology(Vector(proc(3), proc(1), proc(2)), Set(ProcEdge(aOut(1 @ out),aIn(2 @ in))))(1, Map(proc(1) -> Set(ProcEdge(aOut(1 @ out),aIn(2 @ in))))); SOURCE = proc(1); AFFECTED = Vector(proc(2))
+aIn(2 @ in) : synthetic = true
+aIn(2 @ in) : addEdge( ProcEdge(aOut(1 @ out),aIn(2 @ in)) )
+aOut(1 @ out) : bus = Some(sh-abus@24840600) (old: None)
+aIn(2 @ in) : bus = Some(sh-abus@24840600) (old: None)
+AudioBus(<localhost>,16,2).alloc -> 1
+aOut(1 @ out) : play
+AudioBus(<localhost>,16,2).free -> 0
+AudioBus(<localhost>,18,2).alloc -> 1
+AudioBus(<localhost>,18,2).alloc -> 2
+aIn(2 @ in) : play
+aOut(1 @ out) : stop
+AudioBus(<localhost>,18,2).alloc -> 3
+AudioBus(<localhost>,20,2).alloc -> 1
+AudioBus(<localhost>,20,2).alloc -> 2
+AudioBus(<localhost>,18,2).alloc -> 4
+AudioBus(<localhost>,18,2).alloc -> 5
+aOut(3 @ out) : addEdge( ProcEdge(aOut(3 @ out),aIn(2 @ in)) )
+NEW TOPO = Topology(Vector(proc(1), proc(3), proc(2)), Set(ProcEdge(aOut(1 @ out),aIn(2 @ in)), ProcEdge(aOut(3 @ out),aIn(2 @ in))))(0, Map(proc(1) -> Set(ProcEdge(aOut(1 @ out),aIn(2 @ in))), proc(3) -> Set(ProcEdge(aOut(3 @ out),aIn(2 @ in))))); SOURCE = proc(2); AFFECTED = Vector(proc(3))
+aIn(2 @ in) : addEdge( ProcEdge(aOut(3 @ out),aIn(2 @ in)) )
+aOut(3 @ out) : bus = Some(sh-abus@26255574) (old: None)
+aIn(2 @ in) : bus = Some(sh-abus@26255574) (old: Some(sh-abus@24840600))
+aOut(1 @ out) : bus = Some(sh-abus@26255574) (old: Some(sh-abus@24840600))
+AudioBus(<localhost>,18,2).free -> 4
+AudioBus(<localhost>,22,2).alloc -> 1
+AudioBus(<localhost>,22,2).free -> 0
+AudioBus(<localhost>,24,2).alloc -> 1
+AudioBus(<localhost>,24,2).alloc -> 2
+aOut(3 @ out) : play
+AudioBus(<localhost>,24,2).alloc -> 3
+AudioBus(<localhost>,26,2).alloc -> 1
+AudioBus(<localhost>,26,2).alloc -> 2
+AudioBus(<localhost>,24,2).alloc -> 4
+AudioBus(<localhost>,24,2).alloc -> 5
+
+was ist bus 22??
+
+
+  [ "/g_new", 1000, 0, 1 ],	// p1
+  [ "/g_new", 1001, 3, 1000 ],  // p2 after p1
+  [ "/s_new", "proc0", 1002, 1, 1000 ], // synth p1
+  [ "/error", -1 ],
+  [ "/n_set", 1002, "out", 16.0 ], // 16 = dummy
+  [ "/error", -2 ],
+  [ "/s_new", "proc1", 1003, 1, 1001 ],  // synth p2
+  [ "/error", -1 ],
+  [ "/n_set", 1002, "out", 18.0 ],  // p1.out = 18
+  [ "/n_set", 1003, "in", 18.0 ],   // p2.out = 18
+  [ "/error", -2 ],
+  [ "/g_new", 1004, 2, 1002 ], // pre-group p1
+  [ "/s_new", "proc2", 1005, 1, 1004, "$dur", 15.0, "$done", 0.0 ],  // xfade send (in = 18 ; out = 20)
+  [ "/g_new", 1006, 3, 1002 ],  // post-group p1
+  [ "/s_new", "proc3", 1007, 0, 1006, "$start", 1.0, "$stop", 0.0, "$shape", 3.0, "$dur", 15.0, "$done", 0.0 ], // x rcv
+  [ "/error", -1 ],
+  [ "/n_set", 1005, "$in", 18.0 ],
+  [ "/n_set", 1005, "$out", 20.0 ],
+  [ "/n_set", 1007, "$in", 20.0 ],
+  [ "/n_set", 1007, "$bus", 18.0 ],
+  [ "/error", -2 ],
+  [ "/g_new", 1008, 0, 1000 ],	// p1 BACK
+  [ "/g_tail", 1008, 1002 ],    // --> BACK
+  [ "/n_before", 1004, 1002 ],	// --> BACK
+  [ "/n_after", 1006, 1002 ],   // --> BACK
+  [ "/s_new", "proc4", 1009, 0, 1008, "$dur", 15.0 ],  // p1 BACK KILLER
+  [ "/g_new", 1010, 2, 1001 ],	 // p3 before p2
+  [ "/g_new", 1011, 1, 1010 ],   // core-group p3(?)
+  [ "/error", -1 ],
+  [ "/n_set", 1003, "in", 22.0 ],  // p2.in = 22 ("dummy"?) XXX WHY? the fade synths of p1 should be holding access?
+  [ "/error", -2 ],
+  [ "/s_new", "proc5", 1012, 0, 1011 ],  // synth p3
+  [ "/error", -1 ],
+  [ "/n_set", 1003, "in", 24.0 ],   // p2.in = 24 (MISTAKE HERE : p1 needs change too)
+// WORKAROUND : since p3 didn't have bus, bus p2 did, we could use the in-bus instead 
+  [ "/n_set", 1012, "out", 24.0 ],  // p3.out = 24
+  [ "/error", -2 ],
+  [ "/g_new", 1013, 2, 1011 ],  // pre-group p3
+  [ "/s_new", "proc2", 1014, 1, 1013, "$dur", 15.0, "$done", 2.0 ],  // xfade send (in = 24 ; out = 26)
+  [ "/g_new", 1015, 3, 1011 ],  // post-group p3
+  [ "/s_new", "proc3", 1016, 0, 1015, "$start", 0.0, "$stop", 1.0, "$shape", 4.0, "$dur", 15.0, "$done", 2.0 ], // x rcv
+  [ "/error", -1 ],
+  [ "/n_set", 1014, "$in", 24.0 ],
+  [ "/n_set", 1014, "$out", 26.0 ],
+  [ "/n_set", 1016, "$in", 26.0 ],
+  [ "/n_set", 1016, "$bus", 24.0 ] ]

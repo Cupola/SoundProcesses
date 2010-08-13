@@ -43,10 +43,20 @@ extends ProcRunning {
 
    def stop( implicit tx: ProcTxn ) = {
       tx transit match {
-         case Instant      => rs.free()
+         case Instant      => {
+            rs.free()
+// WRONG
+//            accMapRef().foreach( _._2.player.stop )
+         }
          case glide: Glide => error( "NOT YET SUPPORTED" )
          case xfade: XFade => // nada. Proc calls setGroup already
       }
+// XXX WRONG:
+// NOTE: we currently assume smart players, e.g. from rs.read, rs.write, rs.map,
+// so they will keep holding the resources until the node dies. hence we can
+// safely ignore the stop unless in the case of an Instant transition!
+//      accMapRef().foreach( _._2.player.stop )
+
       accMapRef().foreach( _._2.player.stop )
    }
 
