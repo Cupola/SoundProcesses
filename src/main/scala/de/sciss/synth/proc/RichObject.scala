@@ -217,7 +217,16 @@ class RichGroup private( val group: Group, initOnline: Boolean ) extends RichNod
    def play( target: RichNode, addAction: AddAction = addToHead )( implicit tx: ProcTxn ) {
       require( target.server == server )
 
-      tx.add( group.newMsg( target.node, addAction ), Some( (RequiresChange, isOnline, true) ), false,
+      // XXX THERE IS CURRENTLY A PROBLEM EXHIBITED BY TEST3: BASICALLY --
+      // since newMsg is not audible, it might be placed in the first bundle, but then
+      // since moveAfterMsg is audible, the target of this group's newMsg might be
+      // moved, ending up in moveAfterMsg following the g_new message, leaving this
+      // group in the wrong place of the graph.
+      //
+      // We thus try out a workaround by declaring a group's newMsg also audible...
+//      tx.add( group.newMsg( target.node, addAction ), Some( (RequiresChange, isOnline, true) ), false,
+//              Map( target.isOnline -> true ))
+      tx.add( group.newMsg( target.node, addAction ), Some( (RequiresChange, isOnline, true) ), true,
               Map( target.isOnline -> true ))
    }
 }

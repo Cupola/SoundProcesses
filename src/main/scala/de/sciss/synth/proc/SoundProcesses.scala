@@ -35,11 +35,12 @@ object SoundProcesses {
    def versionString = (version + 0.001).toString.substring( 0, 4 )
 
    def main( args: Array[ String ]) {
-      if( (args.size > 0) && (args( 0 ) == "--test2") ) {
-         test2
-      } else {
-         printInfo
-         System.exit( 1 )
+      (if( args.size > 0 ) args( 0 ) else "") match {
+         case "--test2" => test2
+         case "--test3" => test3
+         case _ =>
+            printInfo
+            System.exit( 1 )
       }
    }
 
@@ -106,6 +107,48 @@ object SoundProcesses {
 //               p1 ~/> p2.control( "freq" )
 //            }
 //         }
+      }
+   }
+
+   def test3 {
+      import DSL._
+      import de.sciss.synth._
+      import de.sciss.synth.ugen._
+      import ProcTxn.{ atomic => t }
+
+      Server.test { s =>
+         ProcDemiurg.addServer( s )
+         t { implicit tx =>
+            val genDummyStereo = gen( "@" ) { graph { Silent.ar( 2 )}}
+            val fieldCollectors: Map[ Int, Proc ] = (1 to 4).map( field => {
+               val genColl = filter( field.toString ) { graph { in => in }}
+               val pColl   = genColl.make
+               val pDummy  = genDummyStereo.make
+               pDummy ~> pColl
+               pColl.play
+//               pDummy.dispose
+               field -> pColl
+            })( collection.breakOut )
+            val sub        = (fieldCollectors - 4).values
+            val collMaster = fieldCollectors( 4 )
+            sub foreach { _ ~> collMaster }
+
+            // ---- master ----
+
+            val pMaster = diff( "master" )( graph { in =>
+               val ctrl = HPF.ar( in, 50 )
+               val cmp  = Compander.ar( in, ctrl, (-12).dbamp, 1, 1.0/3.0 ) * 2
+               Out.ar( 0, cmp )
+            }).make
+//            val topo1 = ProcDemiurg.worlds( s ).topology
+            collMaster ~> pMaster
+//            val topo2 = ProcDemiurg.worlds( s ).topology
+            pMaster.play
+            s.dumpOSC(1)
+            val g1 = collMaster.groupOption
+            val g2 = pMaster.groupOption
+            println( "JA" )
+         }
       }
    }
 
