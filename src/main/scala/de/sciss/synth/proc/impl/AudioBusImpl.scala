@@ -40,7 +40,7 @@ import de.sciss.synth
  *    @version 0.11, 06-Jul-10
  */
 object AudioBusImpl {
-   var verbose = true
+   var verbose = false
 }
 abstract class AudioBusImpl /* extends ProcAudioBus */ /* with RichAudioBus.User */ {
    import AudioBusImpl._ 

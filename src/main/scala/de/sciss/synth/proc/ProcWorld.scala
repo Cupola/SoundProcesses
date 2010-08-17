@@ -98,6 +98,8 @@ object ProcDemiurg extends TxnModel[ ProcDemiurgUpdate ] { // ( val server: Serv
    type Update    = ProcDemiurgUpdate
    type Listener  = TxnModel.Listener[ Update ]
 
+   var verbose = false 
+
    private val syn = new AnyRef
    private var servers = Set.empty[ Server ]
 
@@ -157,7 +159,7 @@ object ProcDemiurg extends TxnModel[ ProcDemiurgUpdate ] { // ( val server: Serv
       if( res.isEmpty ) error( "Could not add edge" )
 
       val Some( (newTopo, source, affected) ) = res
-println( "NEW TOPO = " + newTopo + "; SOURCE = " + source + "; AFFECTED = " + affected )
+      if( verbose ) println( "NEW TOPO = " + newTopo + "; SOURCE = " + source + "; AFFECTED = " + affected )
       if( affected.isEmpty ) {
          return
       }

@@ -253,7 +253,7 @@ object RichBus {
 //      def busChanged( bus: AudioBus )( implicit tx: ProcTxn ) : Unit
 //   }
 
-   private var verbose = true
+   private var verbose = false
 
    private class BusHolder[ T <: Bus ]( val bus: T ) {
       private val useCount = Ref.withCheck( 0 ) { case 0 => bus.free }
