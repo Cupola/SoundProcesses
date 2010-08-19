@@ -42,7 +42,7 @@ import de.sciss.synth.proc.{ ControlValue, Glide, Instant, Proc, ProcAudioBus, P
 /**
  *    @version 0.14, 02-Aug-10
  */
-class ProcImpl( fact: FactoryImpl, val server: Server )
+class ProcImpl( fact: FactoryImpl, cnt: Int, val server: Server )
 extends Proc {
    proc =>
 
@@ -69,7 +69,7 @@ extends Proc {
 //      state = State( true ) // state.copy( valid = true )
 //   }
 
-   def name    = fact.name
+   def name    = if( cnt > 1 ) (fact.name + "#" + cnt) else fact.name
    def anatomy = fact.anatomy
 
    def audioInput( name: String ) : ProcAudioInput    = audioInputs.find(  _.name == name ).get

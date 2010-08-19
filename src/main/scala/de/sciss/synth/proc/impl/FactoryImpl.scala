@@ -31,7 +31,7 @@ package de.sciss.synth.proc.impl
 import de.sciss.synth.Server
 import collection.immutable.{ IndexedSeq => IIdxSeq }
 import de.sciss.synth.proc.{ Proc, ProcAnatomy, ProcDemiurg, ProcEntry, ProcFactory, ProcGraph, ProcParam,
-   ProcParamAudioInput, ProcParamAudioOutput, ProcTxn }
+   ProcParamAudioInput, ProcParamAudioOutput, ProcTxn, Ref }
 
 /**
  *    @version 0.11, 20-Jul-10
@@ -43,8 +43,12 @@ class FactoryImpl( val name: String, val anatomy: ProcAnatomy,
                    val pAudioIns: IIdxSeq[ ProcParamAudioInput ],
                    val pAudioOuts: IIdxSeq[ ProcParamAudioOutput ])
 extends ProcFactory {
+   private val count = Ref( 1 )
+
    def make( implicit tx: ProcTxn ) : Proc = {
-      val res = new ProcImpl( this, Server.default )
+      val cnt = count()
+      count.set( cnt + 1 )
+      val res = new ProcImpl( this, cnt, Server.default )
       ProcDemiurg.addVertex( res )
 //      res.init
       res
